@@ -1,0 +1,11 @@
+name: /userEdu/info
+base_url: http://gossapit.xgimi.com
+variables:
+  data: {"openid": "8c3484c9889525d2edb171b996686ecd"}
+request:
+  url: /userEdu/info
+  method: POST
+  json:
+    ${get_encrypt_data($data)}
+validate:
+  - eq: [status_code, 200]

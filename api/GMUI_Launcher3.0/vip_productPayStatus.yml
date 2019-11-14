@@ -1,0 +1,11 @@
+name: /vip/productPayStatus
+base_url: http://gossapit.xgimi.com
+variables:
+  data: {"key": None}
+request:
+  url: /vip/productPayStatus
+  method: POST
+  json:
+    ${get_encrypt_data($data)}
+validate:
+  - eq: [status_code, 200]

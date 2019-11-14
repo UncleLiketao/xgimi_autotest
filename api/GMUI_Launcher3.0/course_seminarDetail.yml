@@ -1,0 +1,11 @@
+name: /course/seminarDetail
+base_url: http://gossapit.xgimi.com
+variables:
+  data: {"contentId": "4512154"}
+request:
+  url: /course/seminarDetail
+  method: POST
+  json:
+    ${get_encrypt_data($data)}
+validate:
+  - eq: [status_code, 200]

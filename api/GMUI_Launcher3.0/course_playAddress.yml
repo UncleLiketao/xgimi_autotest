@@ -1,0 +1,12 @@
+name: /course/playAddress
+base_url: http://gossapit.xgimi.com
+variables:
+  data: {"openId": "8c3484c9889525d2edb171b996686ecd",
+                "coursewareId": "451511"}
+request:
+  url: /course/playAddress
+  method: POST
+  json:
+    ${get_encrypt_data($data)}
+validate:
+  - eq: [status_code, 200]

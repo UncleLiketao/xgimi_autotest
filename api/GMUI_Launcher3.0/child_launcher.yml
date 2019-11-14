@@ -1,0 +1,11 @@
+name: /child/launcher
+base_url: http://gossapit.xgimi.com
+variables:
+  data: {"gender": 1, "ageDuration": 2}
+request:
+  url: /child/launcher
+  method: POST
+  json:
+    ${get_encrypt_data($data)}
+validate:
+  - eq: [status_code, 200]

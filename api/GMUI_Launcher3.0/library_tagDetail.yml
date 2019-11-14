@@ -1,0 +1,11 @@
+name: /library/tagDetail
+base_url: http://gossapit.xgimi.com
+variables:
+  data: {"libraryId": 4512154, "page": 1, "pageSize": 10}
+request:
+  url: /library/tagDetail
+  method: POST
+  json:
+    ${get_encrypt_data($data)}
+validate:
+  - eq: [status_code, 200]

@@ -1,0 +1,9 @@
+name: /grade/list
+base_url: http://gossapit.xgimi.com
+request:
+  url: /grade/list
+  method: POST
+  json:
+    ${get_encrypt_data()}
+validate:
+  - eq: [status_code, 200]

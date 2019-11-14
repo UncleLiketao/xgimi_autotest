@@ -1,0 +1,12 @@
+name: /vip/productQrCode
+base_url: http://gossapit.xgimi.com
+variables:
+  data: {"openid": "jkh54gh2j3g563gc673jh", "mobile": "15770843323", "product_id": "23",
+                "service": "edu.pay", "from": "edu"}
+request:
+  url: /vip/productQrCode
+  method: POST
+  json:
+    ${get_encrypt_data($data)}
+validate:
+  - eq: [status_code, 200]

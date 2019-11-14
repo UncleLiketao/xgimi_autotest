@@ -1,0 +1,11 @@
+name: /vip/productList
+base_url: http://gossapit.xgimi.com
+variables:
+  data: {"partner": "edu", "from": "edu"}
+request:
+  url: /vip/productList
+  method: POST
+  json:
+    ${get_encrypt_data($data)}
+validate:
+  - eq: [status_code, 200]
