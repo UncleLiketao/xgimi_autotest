@@ -1,3 +1,4 @@
 *.html
 .idea/vcs.xml
 .idea/
+__pycache__/
