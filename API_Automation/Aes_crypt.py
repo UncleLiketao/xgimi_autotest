@@ -30,13 +30,13 @@ class AesCrypt(object):
         return self.unpad(decrypted_text)
 
 
-if __name__=='__main__':
+if __name__ == '__main__':
     aes = AesCrypt()
     method_choice = input("请输入您要进行的操作：1.解密 2.加密\n")
-    if method_choice=="1":
+    if method_choice == "1":
         encrypt_data = input("请输入需要解密的内容：\n")
         print(aes.aes_decode(encrypt_data))
-    elif method_choice=="2":
+    elif method_choice == "2":
         query_data = input("请输入需要加密的内容：\n")
         json_query_data = json.dumps(query_data)
         print(aes.aes_encode(json_query_data))

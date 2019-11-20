@@ -1,6 +1,7 @@
 import json
 import Aes_crypt
 
+
 # 公共参数
 commn_params = {
     'gimiPid': 'EHFAJEF79TAU', 'gimiDevice': 'aosp_synsepalum_YN', 'xgimiDeviceName': 'synsepalum_Y',
