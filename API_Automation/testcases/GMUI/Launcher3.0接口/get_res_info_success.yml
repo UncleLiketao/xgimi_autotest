@@ -3,7 +3,7 @@
 
 - test:
     name: /api/v1/launcher/isConfig
-    api: api/GMUI/api_v1_launcher_isConfig.yml
+    api: api/GMUI/Launcher3.0接口/api_v1_launcher_isConfig.yml
     variables:
         data: {"sourceId":"10001","sourceType":2}
     validate:
@@ -12,7 +12,7 @@
 
 - test:
     name: /child/broadcast/list
-    api: api/GMUI/child_broadcast_list.yml
+    api: api/GMUI/Launcher3.0接口/child_broadcast_list.yml
     variables:
         data: {"broadcastScene":"1"}
     validate:
@@ -21,7 +21,7 @@
 
 - test:
     name: /child/filter/content
-    api: api/GMUI/child_filter_content.yml
+    api: api/GMUI/Launcher3.0接口/child_filter_content.yml
     variables:
         data: {"source": "iqiyi", "dockId": "1", "filters": [{"k": "1", "v": "1"}],
                "page": "1", "pageSize": "10", "gender": "1", "ageDuration": "1"}
@@ -31,7 +31,7 @@
 
 - test:
     name: /child/filter/tags
-    api: api/GMUI/child_filter_tags.yml
+    api: api/GMUI/Launcher3.0接口/child_filter_tags.yml
     variables:
         data: {"source": "iqiyi", "dockId": "1", "gender": "1", "ageDuration": "1"}
     validate:
@@ -40,7 +40,7 @@
 
 - test:
     name: /child/launcher
-    api: api/GMUI/child_launcher.yml
+    api: api/GMUI/Launcher3.0接口/child_launcher.yml
     variables:
         data: {"gender": 1, "ageDuration": 2}
     validate:
@@ -49,7 +49,7 @@
 
 - test:
     name: /child/voice/search
-    api: api/GMUI/child_voice_search.yml
+    api: api/GMUI/Launcher3.0接口/child_voice_search.yml
     variables:
         data: {"film": "小猪佩奇", "filmType": "动画片", "fileSubType": "开心", "filmTag": "动作",
                "filmLanguage": "英语", "filmArea": "美国", "newest": "1", "hottest": "1",
@@ -62,7 +62,7 @@
 
 - test:
     name: /course/playAddress
-    api: api/GMUI/course_playAddress.yml
+    api: api/GMUI/Launcher3.0接口/course_playAddress.yml
     variables:
         data: {"openId": "8c3484c9889525d2edb171b996686ecd",
                "coursewareId": "451511"}
@@ -72,7 +72,7 @@
 
 - test:
     name: /course/seminarDetail
-    api: api/GMUI/course_seminarDetail.yml
+    api: api/GMUI/Launcher3.0接口/course_seminarDetail.yml
     variables:
         data: {"contentId": "4512154"}
     validate:
@@ -82,14 +82,14 @@
 
 - test:
     name: /grade/list
-    api: api/GMUI/grade_list.yml
+    api: api/GMUI/Launcher3.0接口/grade_list.yml
     validate:
       - eq: [status_code, 200]
       - eq: [content.code, 200]
 
 - test:
     name: /library/tag
-    api: api/GMUI/library_tag.yml
+    api: api/GMUI/Launcher3.0接口/library_tag.yml
     variables:
         data: {"libraryId": "4512154"}
     validate:
@@ -98,7 +98,7 @@
 
 - test:
     name: /library/tagDetail
-    api: api/GMUI/library_tagDetail.yml
+    api: api/GMUI/Launcher3.0接口/library_tagDetail.yml
     variables:
         data: {"libraryId": 4512154, "page": 1, "pageSize": 10}
     validate:
@@ -107,7 +107,7 @@
 
 - test:
     name: /user/loginStatus
-    api: api/GMUI/user_loginStatus.yml
+    api: api/GMUI/Launcher3.0接口/user_loginStatus.yml
     variables:
         data: {"key": None}
     validate:
@@ -116,7 +116,7 @@
 
 - test:
     name: /userEdu/info
-    api: api/GMUI/userEdu_info.yml
+    api: api/GMUI/Launcher3.0接口/userEdu_info.yml
     variables:
         data: {"openid": "8c3484c9889525d2edb171b996686ecd"}
     validate:
@@ -125,7 +125,7 @@
 
 - test:
     name: /userEdu/saveUserGrade
-    api: api/GMUI/userEdu_saveUserGrade.yml
+    api: api/GMUI/Launcher3.0接口/userEdu_saveUserGrade.yml
     variables:
         data: {"openid": "ff5d5663695b00f97015588033c196c7", "gradeId": 3, "phone": ""}
     validate:
@@ -134,7 +134,7 @@
 
 - test:
     name: /vip/productList
-    api: api/GMUI/vip_productList.yml
+    api: api/GMUI/Launcher3.0接口/vip_productList.yml
     variables:
         data: {"partner": "edu", "from": "edu"}
     validate:
@@ -143,7 +143,7 @@
 
 - test:
     name: /vip/productPayStatus
-    api: api/GMUI/vip_productPayStatus.yml
+    api: api/GMUI/Launcher3.0接口/vip_productPayStatus.yml
     variables:
         data: {"key": None}
     validate:
@@ -152,7 +152,7 @@
 
 - test:
     name: /vip/productQrCode
-    api: api/GMUI/vip_productQrCode.yml
+    api: api/GMUI/Launcher3.0接口/vip_productQrCode.yml
     variables:
         data: {"openid": "jkh54gh2j3g563gc673jh", "mobile": "15770843323", "product_id": "23",
                "service": "edu.pay", "from": "edu"}
