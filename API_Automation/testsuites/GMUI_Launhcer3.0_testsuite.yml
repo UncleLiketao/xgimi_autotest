@@ -1,7 +1,0 @@
-config:
-  name: "GMUI_Launhcer3.0测试用例"
-
-testcases:
-  name: Get response infomation success
-  testcase: testcases/GMUI_Launcher3.0/get_res_info_success.yml
-
