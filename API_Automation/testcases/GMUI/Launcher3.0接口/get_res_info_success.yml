@@ -34,6 +34,7 @@
       - eq: [status_code, 200]
       - eq: [content.code, 200]
 
+# TODO: 请求数据依赖/child/filter/tags接口返回的数据
 - test:
     name: /child/filter/content
     api: api/GMUI/Launcher3.0接口/child_filter_content.yml
@@ -53,6 +54,7 @@
       - eq: [status_code, 200]
       - eq: [content.code, 200]
 
+# 11-19可请求通的接口
 - test:
     name: /child/voice/search
     api: api/GMUI/Launcher3.0接口/child_voice_search.yml
@@ -76,6 +78,7 @@
       - eq: [status_code, 200]
       - eq: [content.code, 200]
 
+# 11-19可请求通的接口
 - test:
     name: /course/seminarDetail
     api: api/GMUI/Launcher3.0接口/course_seminarDetail.yml
@@ -102,6 +105,7 @@
       - eq: [status_code, 200]
       - eq: [content.code, 200]
 
+# TODO: 请求数据依赖/library/tag接口返回的数据
 - test:
     name: /library/tagDetail
     api: api/GMUI/Launcher3.0接口/library_tagDetail.yml
