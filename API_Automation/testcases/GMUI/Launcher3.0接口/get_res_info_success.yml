@@ -1,5 +1,11 @@
 - config:
     name: "Launcher3.0验证接口数据请求"
+    variables:
+        openid1: 75cc69034ce29daa02d261ae5820b87c
+        openid2: 8c3484c9889525d2edb171b996686ecd
+        libraryId: 1
+        coursewareId: 10008
+        contentId: 25
 
 - test:
     name: /api/v1/launcher/isConfig
@@ -20,20 +26,20 @@
       - eq: [content.code, 200]
 
 - test:
-    name: /child/filter/content
-    api: api/GMUI/Launcher3.0接口/child_filter_content.yml
+    name: /child/filter/tags
+    api: api/GMUI/Launcher3.0接口/child_filter_tags.yml
     variables:
-        data: {"source": "iqiyi", "dockId": "1", "filters": [{"k": "1", "v": "1"}],
-               "page": "1", "pageSize": "10", "gender": "1", "ageDuration": "1"}
+        data: {"source": "iqiyi", "dockId": "1", "gender": "1", "ageDuration": "1"}
     validate:
       - eq: [status_code, 200]
       - eq: [content.code, 200]
 
 - test:
-    name: /child/filter/tags
-    api: api/GMUI/Launcher3.0接口/child_filter_tags.yml
+    name: /child/filter/content
+    api: api/GMUI/Launcher3.0接口/child_filter_content.yml
     variables:
-        data: {"source": "iqiyi", "dockId": "1", "gender": "1", "ageDuration": "1"}
+        data: {"source": "iqiyi", "dockId": "1", "filters": [{"k": "1", "v": "1"}],
+               "page": "1", "pageSize": "10", "gender": "1", "ageDuration": "1"}
     validate:
       - eq: [status_code, 200]
       - eq: [content.code, 200]
@@ -64,8 +70,8 @@
     name: /course/playAddress
     api: api/GMUI/Launcher3.0接口/course_playAddress.yml
     variables:
-        data: {"openId": "8c3484c9889525d2edb171b996686ecd",
-               "coursewareId": "451511"}
+        data: {"openid": $openid2,
+               "coursewareId": $coursewareId}
     validate:
       - eq: [status_code, 200]
       - eq: [content.code, 200]
@@ -74,7 +80,7 @@
     name: /course/seminarDetail
     api: api/GMUI/Launcher3.0接口/course_seminarDetail.yml
     variables:
-        data: {"contentId": "4512154"}
+        data: {"contentId": $contentId}
     validate:
       - eq: [status_code, 200]
       - eq: [content.code, 200]
@@ -91,7 +97,7 @@
     name: /library/tag
     api: api/GMUI/Launcher3.0接口/library_tag.yml
     variables:
-        data: {"libraryId": "4512154"}
+        data: {"libraryId": $libraryId}
     validate:
       - eq: [status_code, 200]
       - eq: [content.code, 200]
@@ -100,7 +106,7 @@
     name: /library/tagDetail
     api: api/GMUI/Launcher3.0接口/library_tagDetail.yml
     variables:
-        data: {"libraryId": 4512154, "page": 1, "pageSize": 10}
+        data: {"libraryTagId": 4512154, "page": 1, "pageSize": 10}
     validate:
       - eq: [status_code, 200]
       - eq: [content.code, 200]
@@ -118,7 +124,7 @@
     name: /userEdu/info
     api: api/GMUI/Launcher3.0接口/userEdu_info.yml
     variables:
-        data: {"openid": "8c3484c9889525d2edb171b996686ecd"}
+        data: {"openid": $openid2}
     validate:
       - eq: [status_code, 200]
       - eq: [content.code, 200]
@@ -127,7 +133,7 @@
     name: /userEdu/saveUserGrade
     api: api/GMUI/Launcher3.0接口/userEdu_saveUserGrade.yml
     variables:
-        data: {"openid": "ff5d5663695b00f97015588033c196c7", "gradeId": 3, "phone": ""}
+        data: {"openid": $openid1, "gradeId": 3, "phone": ""}
     validate:
       - eq: [status_code, 200]
       - eq: [content.code, 200]
@@ -137,6 +143,8 @@
     api: api/GMUI/Launcher3.0接口/vip_productList.yml
     variables:
         data: {"partner": "edu", "from": "edu"}
+    extract:
+        product_id: content.data.0.product_id
     validate:
       - eq: [status_code, 200]
       - eq: [content.code, 200]
@@ -154,7 +162,7 @@
     name: /vip/productQrCode
     api: api/GMUI/Launcher3.0接口/vip_productQrCode.yml
     variables:
-        data: {"openid": "jkh54gh2j3g563gc673jh", "mobile": "15770843323", "product_id": "23",
+        data: {"openid": $openid1, "mobile": "15770843323", "product_id": $product_id,
                "service": "edu.pay", "from": "edu"}
     validate:
       - eq: [status_code, 200]
