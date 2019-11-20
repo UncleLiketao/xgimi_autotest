@@ -1,14 +1,18 @@
 import requests
 import os
-import numpy
 
-email_sender_url = "http://notify.i.xgimi.com/notification/email/send"
+# 项目根目录路径
+PROJECT_PATH = os.path.abspath(os.path.join(os.path.dirname(os.path.split(os.path.realpath(__file__))[0]), '.'))
+# 接口测试报告路径
+API_REPORT_PATH = PROJECT_PATH + "\\API_Automation\\reports"
+# OA邮件发送接口生产环境地址
+EMAIL_SENDER_URL = "http://notify.i.xgimi.com/notification/email/send"
+
+
 
 
 def get_report():
-    files_list = []
-    file_path = "C:\\Users\jeremy.li\PycharmProjects\\xgimi_autotest\API_Automation\\reports"
-    for root, dirs, files in os.walk(file_path):
+    for root, dirs, files in os.walk(API_REPORT_PATH):
         print(root)
         print(dirs)
         print(files)
@@ -43,7 +47,7 @@ def run_case():
 
 
 if __name__=='__main__':
-    get_report()
+     get_report()
     # send_email()
     # get_receiver()
     # run_case()

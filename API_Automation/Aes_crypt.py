@@ -1,5 +1,6 @@
 from Crypto.Cipher import AES
 import base64
+import json
 
 
 class AesCrypt(object):
@@ -13,7 +14,7 @@ class AesCrypt(object):
 
     @staticmethod
     def add_to_16(s):
-        while len(s) % 16 != 0:
+        while len(s) % 16!=0:
             s += (16 - len(s) % 16) * chr(16 - len(s) % 16)
         return str.encode(s)
 
@@ -29,14 +30,13 @@ class AesCrypt(object):
         return self.unpad(decrypted_text)
 
 
-if __name__ == '__main__':
-    encrypt_data = "EYGJdmKfOXGe0JS3BAmlpAZSAypHuzesHHvKJBh5RXVXoSz/jrJUKCoujH+SOHXzLIGjJdB6562uYlTjHpbtf1h2Ov3h/xEC1b6GxXCN10YOUxipFRtIH8L53hv25Gt6VQQJND5Sp67Y4nEBvVhr9DRncyTU6VF3vlpleO08H+Dm2OjTysd7nRwi6UP4gVgJTekmUBigSQb3TIOVTRK5N6l4aF3yHXoLGnM6jShUTtLQ9ZQ+rlgsDSBAT6HN+1SWZuBuVoYzi9YNABPzwxU2ZPFYRZLMZhBQPW8pCQP7Z0OciL+h4RWMrJYPt6jbMgRKhHm7m33Hwjinj1xvfvbp/raT88H8XQBA6InOYOT/ZtDwpAEWm7nJzQg80zHm6XSa+qNctnaB00Wkp59LenNPeQ=="
-    Query_data = {'gimiPid': 'EHFAJEF79TAU', 'gimiDevice': 'aosp_synsepalum_YN', 'xgimiDeviceName': 'synsepalum_Y',
-                  'deviceMac': '80-0B-52-02-44-26', 'systemVersion': 'v1.6.23', 'launcherVersionCode': 1510,
-                  'androidVersion': 'Android 6.0', 'systemIsRoot': False}
+if __name__=='__main__':
     aes = AesCrypt()
-    print(aes.aes_decode(encrypt_data))
-    # json_query_data = json.dumps(Query_data)
-    # print(aes.aes_encode(json_query_data))
-    # print(aes.aes_decode(aes.aes_encode(json_query_data)))
-
+    method_choice = input("请输入您要进行的操作：1.解密 2.加密\n")
+    if method_choice=="1":
+        encrypt_data = input("请输入需要解密的内容：\n")
+        print(aes.aes_decode(encrypt_data))
+    elif method_choice=="2":
+        query_data = input("请输入需要加密的内容：\n")
+        json_query_data = json.dumps(query_data)
+        print(aes.aes_encode(json_query_data))
