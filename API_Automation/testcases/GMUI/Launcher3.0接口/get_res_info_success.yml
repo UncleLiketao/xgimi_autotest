@@ -30,16 +30,19 @@
     api: api/GMUI/Launcher3.0接口/child_filter_tags.yml
     variables:
         data: {"source": "iqiyi", "dockId": "1", "gender": "1", "ageDuration": "1"}
+    extract:
+        filter1: content.data.filters.0.tags.0
+        filter2: content.data.filters.1.tags.1
     validate:
       - eq: [status_code, 200]
       - eq: [content.code, 200]
 
-# TODO: 请求数据依赖/child/filter/tags接口返回的数据
+# FIXME: 请求数据使用/child/filter/tags返回的数据，依然失败，返回500 system error
 - test:
     name: /child/filter/content
     api: api/GMUI/Launcher3.0接口/child_filter_content.yml
     variables:
-        data: {"source": "iqiyi", "dockId": "1", "filters": [{"k": "1", "v": "1"}],
+        data: {"source": "iqiyi", "dockId": "1", "filters": [$filter1,],
                "page": "1", "pageSize": "10", "gender": "1", "ageDuration": "1"}
     validate:
       - eq: [status_code, 200]
@@ -54,7 +57,6 @@
       - eq: [status_code, 200]
       - eq: [content.code, 200]
 
-# 11-19可请求通的接口
 - test:
     name: /child/voice/search
     api: api/GMUI/Launcher3.0接口/child_voice_search.yml
@@ -68,6 +70,7 @@
       - eq: [status_code, 200]
       - eq: [content.code, 200]
 
+# FIXME: 传入的openid若为$openid2, 则后面几个步骤会失败
 - test:
     name: /course/playAddress
     api: api/GMUI/Launcher3.0接口/course_playAddress.yml
@@ -78,7 +81,6 @@
       - eq: [status_code, 200]
       - eq: [content.code, 200]
 
-# 11-19可请求通的接口
 - test:
     name: /course/seminarDetail
     api: api/GMUI/Launcher3.0接口/course_seminarDetail.yml
@@ -101,16 +103,17 @@
     api: api/GMUI/Launcher3.0接口/library_tag.yml
     variables:
         data: {"libraryId": $libraryId}
+    extract:
+        tagId: content.data.0.tagId
     validate:
       - eq: [status_code, 200]
       - eq: [content.code, 200]
 
-# TODO: 请求数据依赖/library/tag接口返回的数据
 - test:
     name: /library/tagDetail
     api: api/GMUI/Launcher3.0接口/library_tagDetail.yml
     variables:
-        data: {"libraryTagId": 4512154, "page": 1, "pageSize": 10}
+        data: {"libraryTagId": $tagId, "page": 1, "pageSize": 10}
     validate:
       - eq: [status_code, 200]
       - eq: [content.code, 200]
@@ -171,6 +174,3 @@
     validate:
       - eq: [status_code, 200]
       - eq: [content.code, 200]
-
-
-
