@@ -5,7 +5,10 @@
         openid2: 8c3484c9889525d2edb171b996686ecd
         libraryId: 1
         coursewareId: 10008
-        contentId: 25
+        contentId_seminarDetail: 25
+        contentId_courseAddress: 1000017
+        contentId_courseDetail: 10015
+        
 
 - test:
     name: /api/v1/launcher/isConfig
@@ -31,19 +34,25 @@
     variables:
         data: {"source": "iqiyi", "dockId": "1", "gender": "1", "ageDuration": "1"}
     extract:
-        filter1: content.data.filters.0.tags.0
-        filter2: content.data.filters.1.tags.1
+        k1: content.data.filters.0.k
+        v1: content.data.filters.0.tags.0.k
+        k2: content.data.filters.1.k
+        v2: content.data.filters.1.tags.0.k
     validate:
       - eq: [status_code, 200]
       - eq: [content.code, 200]
 
-# FIXME: 请求数据使用/child/filter/tags返回的数据，依然失败，返回500 system error
 - test:
     name: /child/filter/content
     api: api/GMUI/Launcher3.0接口/child_filter_content.yml
     variables:
-        data: {"source": "iqiyi", "dockId": "1", "filters": [$filter1,],
-               "page": "1", "pageSize": "10", "gender": "1", "ageDuration": "1"}
+        data: {"source": "iqiyi",
+               "dockId": "1",
+               "filters": [{"k": $k1, "v": $v1}, {"k": $k2, "v": $v2}],
+               "page": "1",
+               "pageSize": "10",
+               "gender": "1",
+               "ageDuration": "1"}
     validate:
       - eq: [status_code, 200]
       - eq: [content.code, 200]
@@ -70,13 +79,21 @@
       - eq: [status_code, 200]
       - eq: [content.code, 200]
 
-# FIXME: 传入的openid若为$openid2, 则后面几个步骤会失败
 - test:
     name: /course/playAddress
     api: api/GMUI/Launcher3.0接口/course_playAddress.yml
     variables:
         data: {"openid": $openid2,
-               "coursewareId": $coursewareId}
+               "coursewareId": $contentId_courseAddress}
+    validate:
+      - eq: [status_code, 200]
+      - eq: [content.code, 200]
+
+- test:
+    name: /course/detail
+    api: api/GMUI/Launcher3.0接口/course_detail.yml
+    variables:
+        data: {"contentId": $contentId_courseDetail}
     validate:
       - eq: [status_code, 200]
       - eq: [content.code, 200]
@@ -85,7 +102,7 @@
     name: /course/seminarDetail
     api: api/GMUI/Launcher3.0接口/course_seminarDetail.yml
     variables:
-        data: {"contentId": $contentId}
+        data: {"contentId": $contentId_seminarDetail}
     validate:
       - eq: [status_code, 200]
       - eq: [content.code, 200]
