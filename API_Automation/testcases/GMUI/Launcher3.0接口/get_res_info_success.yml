@@ -80,6 +80,13 @@
       - eq: [content.code, 200]
 
 - test:
+    name: /system/bootAnimation
+    api: api/GMUI/Launcher3.0接口/system_bootAnimation.yml
+    validate:
+      - eq: [status_code, 200]
+      - eq: [content.code, 200]
+
+- test:
     name: /course/playAddress
     api: api/GMUI/Launcher3.0接口/course_playAddress.yml
     variables:
@@ -106,7 +113,6 @@
     validate:
       - eq: [status_code, 200]
       - eq: [content.code, 200]
-
 
 - test:
     name: /grade/list
