@@ -2,6 +2,11 @@ import argparse
 import os
 import sys
 
+# custom: import custom package
+PACKAGE_DIR = os.path.dirname(__file__)
+ROOT_DIR = os.path.abspath(os.path.join(PACKAGE_DIR, '..'))
+sys.path.insert(0, ROOT_DIR)
+
 from httprunner import __description__, __version__
 from httprunner.api import HttpRunner
 from httprunner.compat import is_py2

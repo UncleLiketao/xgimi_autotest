@@ -1,5 +1,6 @@
 import os
 import unittest
+import pprint
 
 from httprunner import (__version__, exceptions, loader, logger, parser,
                         report, runner, utils, validator)
@@ -135,7 +136,7 @@ class HttpRunner(object):
 
         return tests_results
 
-    def _aggregate(self, tests_results):
+    def _aggregate(self, tests_results, testcase_details=None):
         """ aggregate results
 
         Args:
@@ -157,7 +158,7 @@ class HttpRunner(object):
             "details": []
         }
 
-        for tests_result in tests_results:
+        for index_case, tests_result in enumerate(tests_results):
             testcase, result = tests_result
             testcase_summary = report.get_summary(result)
 
@@ -172,6 +173,12 @@ class HttpRunner(object):
 
             report.aggregate_stat(summary["stat"]["teststeps"], testcase_summary["stat"])
             report.aggregate_stat(summary["time"], testcase_summary["time"])
+
+            # custom: add step detail to summary
+            if testcase_details:
+                testcase_detail = testcase_details[index_case]
+                for index_step, teststep in enumerate(testcase_detail.get("teststeps")):
+                    testcase_summary["records"][index_step]["step_detail"] = teststep
 
             summary["details"].append(testcase_summary)
 
@@ -199,11 +206,12 @@ class HttpRunner(object):
 
         # run test suite
         self.exception_stage = "run test suite"
-        results = self._run_suite(test_suite)
+        testcases_results = self._run_suite(test_suite)
 
         # aggregate results
         self.exception_stage = "aggregate results"
-        self._summary = self._aggregate(results)
+        testcase_details = tests_mapping.get("testcases", [])
+        self._summary = self._aggregate(testcases_results, testcase_details)
 
         # generate html report
         self.exception_stage = "generate html report"

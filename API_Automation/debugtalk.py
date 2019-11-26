@@ -36,5 +36,5 @@ def get_nonencrypt_data(data: dict):
 
 
 # 实例
-print(get_encrypt_data({"broadcastScene": "1"}))
-print(get_nonencrypt_data({"sourceId": "10001", "sourceType": 2}))
+# print(get_encrypt_data({"broadcastScene": "1"}))
+# print(get_nonencrypt_data({"sourceId": "10001", "sourceType": 2}))
