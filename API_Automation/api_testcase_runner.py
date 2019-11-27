@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import requests
 import shutil
 import os
@@ -8,11 +9,11 @@ PROJECT_PATH = os.path.abspath(os.path.join(os.path.dirname(os.path.split(os.pat
 # 获取发布系统项目发布项目通知人员信息接口路径（正式环境）
 APIS_PROJECT_MONITOR_URL = "http://devops.t.xgimi.com/apis/project/monitor"
 # 接口测试根目录
-API_AUTOMATION_PATH = PROJECT_PATH + "\\API_Automation"
+API_AUTOMATION_PATH = PROJECT_PATH + "/API_Automation"
 # 接口测试报告路径
-API_REPORT_PATH = PROJECT_PATH + "\\API_Automation\\reports"
+API_REPORT_PATH = PROJECT_PATH + "/API_Automation/reports"
 # OA邮件发送接口生产环境地址
-EMAIL_SENDER_URL = "http://notify.i.xgimi.com/notification/email/send"
+EMAIL_SENDER_URL = "http://notify.pre.xgimi.com/notification/email/send"
 
 
 def get_toEmaiList(app_id="gossapi网关"):
