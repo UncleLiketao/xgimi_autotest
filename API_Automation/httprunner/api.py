@@ -1,3 +1,8 @@
+# -*- coding: utf-8 -*-
+
+"""httprunner较低层接口，用于执行测试用例
+"""
+
 import os
 import unittest
 import pprint
@@ -57,6 +62,7 @@ class HttpRunner(object):
         def _add_test(test_runner, test_dict):
             """ add test to testcase.
             """
+
             def test(self):
                 try:
                     test_runner.run_test(test_dict)
@@ -76,7 +82,8 @@ class HttpRunner(object):
 
             if isinstance(test.__doc__, parser.LazyString):
                 try:
-                    parsed_variables = parser.parse_variables_mapping(variables)
+                    parsed_variables = parser.parse_variables_mapping(
+                        variables)
                     test.__doc__ = parser.parse_lazy_data(
                         test.__doc__, parsed_variables
                     )
@@ -103,11 +110,13 @@ class HttpRunner(object):
                 for times_index in range(times):
                     # suppose one testcase should not have more than 9999 steps,
                     # and one step should not run more than 999 times.
-                    test_method_name = 'test_{:04}_{:03}'.format(index, times_index)
+                    test_method_name = 'test_{:04}_{:03}'.format(
+                        index, times_index)
                     test_method = _add_test(test_runner, test_dict)
                     setattr(TestSequense, test_method_name, test_method)
 
-            loaded_testcase = self.test_loader.loadTestsFromTestCase(TestSequense)
+            loaded_testcase = self.test_loader.loadTestsFromTestCase(
+                TestSequense)
             setattr(loaded_testcase, "config", config)
             setattr(loaded_testcase, "teststeps", tests)
             setattr(loaded_testcase, "runner", test_runner)
@@ -136,18 +145,18 @@ class HttpRunner(object):
 
         return tests_results
 
-    def _aggregate(self, tests_results, testcase_details=None):
+    def _aggregate(self, testcases_results, testcase_details=None):
         """ aggregate results
 
         Args:
-            tests_results (list): list of (testcase, result)
+            testcases_results (list): list of (testcase, result)
 
         """
         summary = {
             "success": True,
             "stat": {
                 "testcases": {
-                    "total": len(tests_results),
+                    "total": len(testcases_results),
                     "success": 0,
                     "fail": 0
                 },
@@ -158,7 +167,7 @@ class HttpRunner(object):
             "details": []
         }
 
-        for index_case, tests_result in enumerate(tests_results):
+        for index_case, tests_result in enumerate(testcases_results):
             testcase, result = tests_result
             testcase_summary = report.get_summary(result)
 
@@ -171,14 +180,18 @@ class HttpRunner(object):
             testcase_summary["name"] = testcase.config.get("name")
             testcase_summary["in_out"] = utils.get_testcase_io(testcase)
 
-            report.aggregate_stat(summary["stat"]["teststeps"], testcase_summary["stat"])
+            report.aggregate_stat(
+                summary["stat"]["teststeps"], testcase_summary["stat"])
             report.aggregate_stat(summary["time"], testcase_summary["time"])
 
-            # custom: add step detail to summary
-            if testcase_details:
-                testcase_detail = testcase_details[index_case]
-                for index_step, teststep in enumerate(testcase_detail.get("teststeps")):
-                    testcase_summary["records"][index_step]["step_detail"] = teststep
+            # custom: add step detail to summary, by zheng.zhang
+            for index_case, testcase_result in enumerate(testcases_results):
+                testcase = testcase_result[0]
+                result = testcase_result[1]
+                teststeps = testcase.teststeps
+                for index_step, teststep in enumerate(teststeps):
+                    step_detail = parser.parse_variables_mapping(teststep["variables"])
+                    testcase_summary["records"][index_step]["step_detail"] = step_detail
 
             summary["details"].append(testcase_summary)
 
@@ -188,7 +201,8 @@ class HttpRunner(object):
         """ run testcase/testsuite data
         """
         project_mapping = tests_mapping.get("project_mapping", {})
-        self.project_working_directory = project_mapping.get("PWD", os.getcwd())
+        self.project_working_directory = project_mapping.get(
+            "PWD", os.getcwd())
 
         if self.save_tests:
             utils.dump_logs(tests_mapping, project_mapping, "loaded")
@@ -291,4 +305,5 @@ class HttpRunner(object):
         elif validator.is_testcases(path_or_tests):
             return self.run_tests(path_or_tests)
         else:
-            raise exceptions.ParamsError("Invalid testcase path or testcases: {}".format(path_or_tests))
+            raise exceptions.ParamsError(
+                "Invalid testcase path or testcases: {}".format(path_or_tests))

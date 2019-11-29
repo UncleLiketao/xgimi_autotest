@@ -247,8 +247,8 @@ def get_mapping_function(function_name, functions_mapping):
         if not found, then try to check if builtin function.
 
     Args:
-        variable_name (str): variable name
-        variables_mapping (dict): variables mapping
+        function_name (str): function name
+        functions_mapping (dict): functions mapping
 
     Returns:
         mapping function object.
@@ -415,6 +415,9 @@ class LazyFunction(object):
     def to_value(self, variables_mapping=None):
         """ parse lazy data with evaluated variables mapping.
             Notice: variables_mapping should not contain any variable or function.
+
+            Returns:
+                the calling of the lazyfunction.
         """
         variables_mapping = variables_mapping or {}
         args = parse_lazy_data(self._args, variables_mapping)
@@ -429,7 +432,7 @@ cached_functions_mapping = {}
 
 
 class LazyString(object):
-    """ evaluate string lazily.
+    """ evaluate string lazily, including functions and variables.
     """
     def __init__(self, raw_string, functions_mapping=None, check_variables_set=None, cached=False):
         """ make raw_string as lazy object with functions_mapping
