@@ -1,6 +1,6 @@
-*.html
 .idea/vcs.xml
 .idea/
 __pycache__/
 API_Automation/logs
+API_Automation/reports
 .vscode

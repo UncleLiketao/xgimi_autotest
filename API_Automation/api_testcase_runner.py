@@ -66,5 +66,5 @@ def main():
     send_email(to_EmailList)
 
 
-if __name__ == '__main__':
+if __name__=='__main__':
     main()
