@@ -7,16 +7,40 @@ import io
 import os
 import platform
 import time
+import pprint
 import unittest
 from base64 import b64encode
 from collections import Iterable
 from datetime import datetime
 
-from jinja2 import Template, escape
+from jinja2 import Template, escape, Environment, FileSystemLoader
 from requests.cookies import RequestsCookieJar
 
 from httprunner import __version__, logger
 from httprunner.compat import basestring, bytes, json, numeric_types
+
+########################
+#template utils(custom)#
+########################
+
+
+def prettify_json(json_or_dict):
+    """Prettify json string
+
+    Args:
+        json_or_dict: String or a dict to be prettified
+
+    Returns:
+        Pretty json string
+
+    TODO: Process String.
+    """
+    p = pprint.PrettyPrinter(width=20)
+    return p.pformat(json_or_dict)
+
+########################
+# parse summary        #
+########################
 
 
 def get_platform():
@@ -59,11 +83,11 @@ def get_summary(result):
         }
     }
     summary["stat"]["successes"] = summary["stat"]["total"] \
-                                   - summary["stat"]["failures"] \
-                                   - summary["stat"]["errors"] \
-                                   - summary["stat"]["skipped"] \
-                                   - summary["stat"]["expectedFailures"] \
-                                   - summary["stat"]["unexpectedSuccesses"]
+        - summary["stat"]["failures"] \
+        - summary["stat"]["errors"] \
+        - summary["stat"]["skipped"] \
+        - summary["stat"]["expectedFailures"] \
+        - summary["stat"]["unexpectedSuccesses"]
 
     summary["time"] = {
         'start_at': result.start_at,
@@ -87,7 +111,8 @@ def aggregate_stat(origin_stat, new_stat):
             origin_stat[key] = new_stat[key]
         elif key == "start_at":
             # start datetime
-            origin_stat["start_at"] = min(origin_stat["start_at"], new_stat["start_at"])
+            origin_stat["start_at"] = min(
+                origin_stat["start_at"], new_stat["start_at"])
         elif key == "duration":
             # duration = max_end_time - min_start_time
             max_end_time = max(origin_stat["start_at"] + origin_stat["duration"],
@@ -112,7 +137,8 @@ def stringify_summary(summary):
             meta_datas_expanded = []
             __expand_meta_datas(meta_datas, meta_datas_expanded)
             record["meta_datas_expanded"] = meta_datas_expanded
-            record["response_time"] = __get_total_response_time(meta_datas_expanded)
+            record["response_time"] = __get_total_response_time(
+                meta_datas_expanded)
 
 
 def __stringify_request(request_data):
@@ -291,20 +317,23 @@ def gen_html_report(summary, report_template=None, report_dir=None, report_file=
         report_file (str): specify html report file path, this has higher priority than specifying report dir.
 
     """
+    # TODO: Optimize path selection
     if not report_template:
         report_template = os.path.join(
             os.path.abspath(os.path.dirname(__file__)),
             "static",
-            "report_template.html"
+            "report_template_pretty.html"
         )
         logger.log_debug("No html report template specified, use default.")
     else:
-        logger.log_info("render with html report template: {}".format(report_template))
+        logger.log_info(
+            "render with html report template: {}".format(report_template))
 
     logger.log_info("Start to render Html report ...")
 
     start_at_timestamp = int(summary["time"]["start_at"])
-    summary["time"]["start_datetime"] = datetime.fromtimestamp(start_at_timestamp).strftime('%Y-%m-%d %H:%M:%S')
+    summary["time"]["start_datetime"] = datetime.fromtimestamp(
+        start_at_timestamp).strftime('%Y-%m-%d %H:%M:%S')
 
     if report_file:
         report_dir = os.path.dirname(report_file)
@@ -317,14 +346,18 @@ def gen_html_report(summary, report_template=None, report_dir=None, report_file=
         os.makedirs(report_dir)
 
     report_path = os.path.join(report_dir, report_file_name)
-    with io.open(report_template, "r", encoding='utf-8') as fp_r:
-        template_content = fp_r.read()
-        with io.open(report_path, 'w', encoding='utf-8') as fp_w:
-            rendered_content = Template(
-                template_content,
-                extensions=["jinja2.ext.loopcontrols"]
-            ).render(summary)
-            fp_w.write(rendered_content)
+
+    # custom: add filter, by zheng.zhang
+    template_dir, template_file = os.path.split(report_template)
+    env = Environment(
+        loader=FileSystemLoader(template_dir),
+        extensions=["jinja2.ext.loopcontrols"]
+    )
+    env.filters['prettify_json'] = prettify_json
+    template = env.get_template(template_file)
+    with io.open(report_path, 'w', encoding='utf-8') as fp_w:
+        rendered_content = template.render(summary)
+        fp_w.write(rendered_content)
 
     logger.log_info("Generated Html report: {}".format(report_path))
 
@@ -335,6 +368,7 @@ class HtmlTestResult(unittest.TextTestResult):
     """ A html result class that can generate formatted html results.
         Used by TextTestRunner.
     """
+
     def __init__(self, stream, descriptions, verbosity):
         super(HtmlTestResult, self).__init__(stream, descriptions, verbosity)
         self.records = []
@@ -378,7 +412,8 @@ class HtmlTestResult(unittest.TextTestResult):
 
     def addExpectedFailure(self, test, err):
         super(HtmlTestResult, self).addExpectedFailure(test, err)
-        self._record_test(test, 'ExpectedFailure', self._exc_info_to_string(err, test))
+        self._record_test(test, 'ExpectedFailure',
+                          self._exc_info_to_string(err, test))
         print("")
 
     def addUnexpectedSuccess(self, test):
