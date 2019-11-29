@@ -1,3 +1,8 @@
+# -*- coding: utf-8 -*-
+
+"""测试报告模块，用于从测试结果中提取报告所需的上下文、获取平台信息、生成测试报告
+"""
+
 import io
 import os
 import platform

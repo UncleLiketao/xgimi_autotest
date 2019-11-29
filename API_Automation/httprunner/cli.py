@@ -1,8 +1,13 @@
+# -*- coding: utf-8 -*-
+
+"""命令行命令，命令行参数定义与解析
+"""
+
 import argparse
 import os
 import sys
 
-# custom: import custom package
+# custom: add root path to environment, by zheng.zhang
 PACKAGE_DIR = os.path.dirname(__file__)
 ROOT_DIR = os.path.abspath(os.path.join(PACKAGE_DIR, '..'))
 sys.path.insert(0, ROOT_DIR)
