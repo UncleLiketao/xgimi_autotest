@@ -1,4 +1,4 @@
-# debug enter
+# Debug enter
 
 import os
 import sys
@@ -17,6 +17,6 @@ runner = HttpRunner(
     log_level='INFO'
 )
 
-runner.run(r"D:\workspace\projects\github\xgimi_autotest\API_Automation\testcases\GMUI\Launcher3.0接口\get_res_info_success.yml")
+runner.run(r".\API_Automation\testsuites\GMUI\launcher3.0_testsuite.yml")
 summary = runner.summary
 print("OK")

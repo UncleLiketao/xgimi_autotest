@@ -1,0 +1,16 @@
+config:
+    name: some processes
+
+testcases:
+    get tag detail:
+        testcase: testcases/GMUI/Launcher3.0接口/get_library_tag_detail.yml
+        parameters:
+            libraryId: [1, 2]
+            page: [1]
+            pageSize: ${random_list(random_randint,4,1,100)}
+
+    get child content:
+        testcase: testcases/GMUI/Launcher3.0接口/get_child_content.yml
+        parameters:
+            page: [1]
+            pageSize: ${random_list(random_randint,4,1,100)}

@@ -167,6 +167,7 @@ class HttpRunner(object):
             "details": []
         }
 
+        # custom
         for index_case, tests_result in enumerate(testcases_results):
             testcase, result = tests_result
             testcase_summary = report.get_summary(result)
@@ -185,13 +186,14 @@ class HttpRunner(object):
             report.aggregate_stat(summary["time"], testcase_summary["time"])
 
             # custom: add step detail to summary, by zheng.zhang
-            for index_case, testcase_result in enumerate(testcases_results):
-                testcase = testcase_result[0]
-                result = testcase_result[1]
+            try:
                 teststeps = testcase.teststeps
                 for index_step, teststep in enumerate(teststeps):
                     step_detail = parser.parse_variables_mapping(teststep["variables"])
                     testcase_summary["records"][index_step]["step_detail"] = step_detail
+            except Exception as e:
+                print("add step detail to summary, in {}".format(__file__))
+                raise e
 
             summary["details"].append(testcase_summary)
 
@@ -305,5 +307,6 @@ class HttpRunner(object):
         elif validator.is_testcases(path_or_tests):
             return self.run_tests(path_or_tests)
         else:
+            print(path_or_tests)
             raise exceptions.ParamsError(
                 "Invalid testcase path or testcases: {}".format(path_or_tests))

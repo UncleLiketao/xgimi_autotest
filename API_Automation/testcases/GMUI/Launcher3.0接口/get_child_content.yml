@@ -1,0 +1,34 @@
+- config:
+    name: Get library tag detail
+
+- test:
+    name: /child/filter/tags
+    api: api/GMUI/Launcher3.0接口/child_filter_tags.yml
+    variables:
+        data: {"source": "iqiyi", "dockId": "1", "gender": "1", "ageDuration": "1"}
+    extract:
+        filters: content.data.filters
+        k1: content.data.filters.0.k
+        v1: content.data.filters.0.tags.0.k
+        k2: content.data.filters.1.k
+        v2: content.data.filters.1.tags.0.k
+    validate:
+      - eq: [status_code, 200]
+      - eq: [content.code, 200]
+
+- test:
+    name: /child/filter/content
+    api: api/GMUI/Launcher3.0接口/child_filter_content.yml
+    variables:
+        data: {"source": "iqiyi",
+               "dockId": "1",
+               "filters": [{"k": $k1, "v": $v1}, {"k": $k2, "v": $v2}],
+               "page": "1",
+               "pageSize": "$pageSize",
+               "gender": "1",
+               "ageDuration": "1"}
+    validate:
+      - eq: [status_code, 200]
+      - eq: [content.code, 200]
+
+

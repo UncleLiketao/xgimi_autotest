@@ -1,5 +1,72 @@
 import json
 import Aes_crypt
+import random
+
+# 辅助工具
+def errortracker(func):
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except:
+            print("Error in {}".format(func.__name__))
+            raise
+    return wrapper
+
+
+# 基础工具
+def random_seq(length):
+    """获取随机序列
+
+    Args:
+        length: 序列长度
+
+    Returns:
+        随机序列
+    """
+    pass
+
+
+def random_randint(*args, **kwargs):
+    """random.randint的封装
+    """
+    return random.randint(*args, **kwargs)
+
+
+@errortracker
+def random_choice(choices, attributes=None):
+    """random.choice的封装与扩展，可传入attributes向下取其属性
+
+    Args:
+        choices: 输入的列表
+        attributes: 字符串，需要取的属性名，向下取多层时以'.'分隔，为None时不取
+            e.g.
+                "data.id" 表示取 choice["data"]["id"]
+
+    Returns:
+        随机选择的元素的特定属性
+    """
+    choice = random.choice(choices)
+    if attributes is None:
+        return choice
+    stack = attributes.split('.')
+    for attribute in stack:
+        choice = choice.get(attribute)
+    return choice
+
+
+def random_list(func_name, length, *args, **kwargs):
+    """使用func_name返回值作为list元素生成随机列表
+    旨在生成数据驱动测试的数据
+
+    Args:
+        func_name: 生成单个元素使用的函数名
+        length: 列表长度
+        *args, **kwargs: func_name所需的参数
+    
+    Returns:
+        随机生成的列表
+    """
+    return [eval("{}(*{}, **{})".format(func_name, args, kwargs)) for _ in range(length)]
 
 
 # 公共参数

@@ -1,0 +1,34 @@
+- config:
+    name: Get library tag detail
+
+- test:
+    name: get tag list
+    api: api/GMUI/Launcher3.0接口/library_tag.yml
+    variables:
+        data: {"libraryId": "$libraryId"}
+    extract:
+        tagId: content.data.0.tagId
+    validate:
+        - eq: [status_code, 200]
+        - eq: [content.code, 200]
+
+- test:
+    name: get tag detail with tagId
+    api: api/GMUI/Launcher3.0接口/library_tagDetail.yml
+    variables:
+        data: {"libraryTagId": $tagId, "page": $page, "pageSize": $pageSize}
+    extract:
+        videoInfo: content.data.videoInfo
+    validate:
+        - eq: [status_code, 200]
+        - eq: [content.code, 200]
+
+- test:
+    name: get course detail
+    api: api/GMUI/Launcher3.0接口/course_detail.yml
+    variables:
+        # 随机取contentId
+        data: {"contentId": "${random_choice($videoInfo,contentId)}"}
+    validate:
+      - eq: [status_code, 200]
+      - eq: [content.code, 200]

@@ -1,6 +1,14 @@
+# 项目配置文件
 .idea/vcs.xml
 .idea/
+.vscode
+
+# 编译生成文件
 __pycache__/
+
+# 框架配置文件
+.env
+
+# 框架输出文件
 API_Automation/logs
 API_Automation/reports
-.vscode
