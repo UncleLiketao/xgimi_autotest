@@ -1,11 +1,10 @@
 name: /api/v1/launcher/isConfig
-base_url: http://goss.t.xgimi.com
+base_url: ${ENV(Host2)}
 variables:
-  data: {"sourceId":"10001","sourceType":2}
+    data: { "sourceId": "10001", "sourceType": 2 }
 request:
-  url: /api/v1/launcher/isConfig
-  method: POST
-  json:
-    ${get_nonencrypt_data($data)}
+    url: /api/v1/launcher/isConfig
+    method: POST
+    json: ${get_nonencrypt_data($data)}
 validate:
-  - eq: [status_code, 200]
+    - eq: [status_code, 200]

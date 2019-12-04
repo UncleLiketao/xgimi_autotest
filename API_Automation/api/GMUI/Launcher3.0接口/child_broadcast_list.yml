@@ -1,11 +1,10 @@
 name: /child/broadcast/list
-base_url: http://gossapit.xgimi.com
+base_url: ${ENV(Host1)}
 variables:
-  data: {"broadcastScene":"1"}
+    data: { "broadcastScene": "1" }
 request:
-  url: /child/broadcast/list
-  method: POST
-  json:
-    ${get_encrypt_data($data)}
+    url: /child/broadcast/list
+    method: POST
+    json: ${get_encrypt_data($data)}
 validate:
-  - eq: [status_code, 200]
+    - eq: [status_code, 200]

@@ -1,15 +1,29 @@
 name: /child/voice/search
-base_url: http://gossapit.xgimi.com
+base_url: ${ENV(Host1)}
 variables:
-  data: {"film": "小猪佩奇", "filmType": "动画片", "fileSubType": "开心", "filmTag": "动作",
-                "filmLanguage": "英语", "filmArea": "美国", "newest": "1", "hottest": "1",
-                "highScore": "1", "gender": "1", "ageDuration": "1", "page": "1",
-                "pageSize": "1",
-                "uiMode": 4, "guide": "", "guideTips": "", "keyWords": ""}
+    data:
+        {
+            "film": "小猪佩奇",
+            "filmType": "动画片",
+            "fileSubType": "开心",
+            "filmTag": "动作",
+            "filmLanguage": "英语",
+            "filmArea": "美国",
+            "newest": "1",
+            "hottest": "1",
+            "highScore": "1",
+            "gender": "1",
+            "ageDuration": "1",
+            "page": "1",
+            "pageSize": "1",
+            "uiMode": 4,
+            "guide": "",
+            "guideTips": "",
+            "keyWords": "",
+        }
 request:
-  url: /child/voice/search
-  method: POST
-  json:
-    ${get_encrypt_data($data)}
+    url: /child/voice/search
+    method: POST
+    json: ${get_encrypt_data($data)}
 validate:
-  - eq: [status_code, 200]
+    - eq: [status_code, 200]

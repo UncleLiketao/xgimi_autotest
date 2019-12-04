@@ -1,11 +1,10 @@
 name: /course/detail
-base_url: http://gossapit.xgimi.com
+base_url: ${ENV(Host1)}
 variables:
-  data: {"contentId": "25"}
+    data: { "contentId": "25" }
 request:
-  url: /course/detail
-  method: POST
-  json:
-    ${get_encrypt_data($data)}
+    url: /course/detail
+    method: POST
+    json: ${get_encrypt_data($data)}
 validate:
-  - eq: [status_code, 200]
+    - eq: [status_code, 200]

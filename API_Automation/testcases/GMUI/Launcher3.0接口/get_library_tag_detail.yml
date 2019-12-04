@@ -1,5 +1,9 @@
 - config:
     name: Get library tag detail
+    variables:
+        libraryId: 1
+        page: 1
+        pageSize: 10
 
 - test:
     name: get tag list

@@ -1,11 +1,10 @@
 name: /vip/productList
-base_url: http://gossapit.xgimi.com
+base_url: ${ENV(Host1)}
 variables:
-  data: {"partner": "edu", "from": "edu"}
+    data: { "partner": "edu", "from": "edu" }
 request:
-  url: /vip/productList
-  method: POST
-  json:
-    ${get_encrypt_data($data)}
+    url: /vip/productList
+    method: POST
+    json: ${get_encrypt_data($data)}
 validate:
-  - eq: [status_code, 200]
+    - eq: [status_code, 200]

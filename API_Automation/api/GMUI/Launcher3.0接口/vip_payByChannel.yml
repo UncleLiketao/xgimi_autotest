@@ -1,7 +1,7 @@
-name: /grade/list
+name: /getVipPayByChannel
 base_url: ${ENV(Host1)}
 request:
-    url: /grade/list
+    url: /getVipPayByChannel
     method: POST
     json: ${get_encrypt_data()}
 validate:

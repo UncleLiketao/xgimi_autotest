@@ -1,11 +1,10 @@
 name: /system/bootAnimation
-base_url: http://gossapit.xgimi.com
+base_url: ${ENV(Host1)}
 variables:
-  data: {}
+    data: {}
 request:
-  url: /system/bootAnimation
-  method: POST
-  json:
-    ${get_encrypt_data($data)}
+    url: /system/bootAnimation
+    method: POST
+    json: ${get_encrypt_data($data)}
 validate:
-  - eq: [status_code, 200]
+    - eq: [status_code, 200]

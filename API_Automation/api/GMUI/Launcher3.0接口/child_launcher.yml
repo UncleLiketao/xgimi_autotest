@@ -1,11 +1,10 @@
 name: /child/launcher
-base_url: http://gossapit.xgimi.com
+base_url: ${ENV(Host1)}
 variables:
-  data: {"gender": 1, "ageDuration": 2}
+    data: { "gender": 1, "ageDuration": 2 }
 request:
-  url: /child/launcher
-  method: POST
-  json:
-    ${get_encrypt_data($data)}
+    url: /child/launcher
+    method: POST
+    json: ${get_encrypt_data($data)}
 validate:
-  - eq: [status_code, 200]
+    - eq: [status_code, 200]

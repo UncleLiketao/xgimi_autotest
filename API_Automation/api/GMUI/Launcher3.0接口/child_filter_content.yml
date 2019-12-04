@@ -1,12 +1,19 @@
 name: /child/filter/content
-base_url: http://gossapit.xgimi.com
+base_url: ${ENV(Host1)}
 variables:
-  data: {"source": "iqiyi", "dockId": "1", "filters": [{"k": "1", "v": "1"}],
-                "page": "1", "pageSize": "10", "gender": "1", "ageDuration": "1"}
+    data:
+        {
+            "source": "iqiyi",
+            "dockId": "1",
+            "filters": [{ "k": "1", "v": "1" }],
+            "page": "1",
+            "pageSize": "10",
+            "gender": "1",
+            "ageDuration": "1",
+        }
 request:
-  url: /child/filter/content
-  method: POST
-  json:
-    ${get_encrypt_data($data)}
+    url: /child/filter/content
+    method: POST
+    json: ${get_encrypt_data($data)}
 validate:
-  - eq: [status_code, 200]
+    - eq: [status_code, 200]

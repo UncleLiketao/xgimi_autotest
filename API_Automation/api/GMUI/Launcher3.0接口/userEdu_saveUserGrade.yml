@@ -1,11 +1,15 @@
 name: /userEdu/saveUserGrade
-base_url: http://gossapit.xgimi.com
+base_url: ${ENV(Host1)}
 variables:
-  data: {"openid": "ff5d5663695b00f97015588033c196c7", "gradeId": 3, "phone": ""}
+    data:
+        {
+            "openid": "ff5d5663695b00f97015588033c196c7",
+            "gradeId": 3,
+            "phone": "",
+        }
 request:
-  url: /userEdu/saveUserGrade
-  method: POST
-  json:
-    ${get_encrypt_data($data)}
+    url: /userEdu/saveUserGrade
+    method: POST
+    json: ${get_encrypt_data($data)}
 validate:
-  - eq: [status_code, 200]
+    - eq: [status_code, 200]

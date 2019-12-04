@@ -1,5 +1,7 @@
 - config:
     name: Get library tag detail
+    variables:
+        pageSize: 10
 
 - test:
     name: /child/filter/tags

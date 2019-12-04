@@ -1,11 +1,10 @@
 name: /library/tagDetail
-base_url: http://gossapit.xgimi.com
+base_url: ${ENV(Host1)}
 variables:
-  data: {"libraryId": 4512154, "page": 1, "pageSize": 10}
+    data: { "libraryId": 4512154, "page": 1, "pageSize": 10 }
 request:
-  url: /library/tagDetail
-  method: POST
-  json:
-    ${get_encrypt_data($data)}
+    url: /library/tagDetail
+    method: POST
+    json: ${get_encrypt_data($data)}
 validate:
-  - eq: [status_code, 200]
+    - eq: [status_code, 200]

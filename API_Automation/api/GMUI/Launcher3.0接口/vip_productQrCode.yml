@@ -1,12 +1,17 @@
 name: /vip/productQrCode
-base_url: http://gossapit.xgimi.com
+base_url: ${ENV(Host1)}
 variables:
-  data: {"openid": "jkh54gh2j3g563gc673jh", "mobile": "15770843323", "product_id": "23",
-                "service": "edu.pay", "from": "edu"}
+    data:
+        {
+            "openid": "jkh54gh2j3g563gc673jh",
+            "mobile": "15770843323",
+            "product_id": "23",
+            "service": "edu.pay",
+            "from": "edu",
+        }
 request:
-  url: /vip/productQrCode
-  method: POST
-  json:
-    ${get_encrypt_data($data)}
+    url: /vip/productQrCode
+    method: POST
+    json: ${get_encrypt_data($data)}
 validate:
-  - eq: [status_code, 200]
+    - eq: [status_code, 200]

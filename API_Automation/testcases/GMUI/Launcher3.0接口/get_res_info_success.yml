@@ -8,7 +8,6 @@
         contentId_seminarDetail: 25
         contentId_courseAddress: 1000017
         contentId_courseDetail: 10015
-        
 
 - test:
     name: /api/v1/launcher/isConfig
@@ -194,6 +193,13 @@
     variables:
         data: {"openid": $openid1, "mobile": "15770843323", "product_id": $product_id,
                "service": "edu.pay", "from": "edu"}
+    validate:
+      - eq: [status_code, 200]
+      - eq: [content.code, 200]
+
+- test:
+    name: /getVipPayByChannel
+    api: api/GMUI/Launcher3.0接口/vip_payByChannel.yml
     validate:
       - eq: [status_code, 200]
       - eq: [content.code, 200]

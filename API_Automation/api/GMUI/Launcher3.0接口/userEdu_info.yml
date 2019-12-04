@@ -1,11 +1,10 @@
 name: /userEdu/info
-base_url: http://gossapit.xgimi.com
+base_url: ${ENV(Host1)}
 variables:
-  data: {"openid": "8c3484c9889525d2edb171b996686ecd"}
+    data: { "openid": "8c3484c9889525d2edb171b996686ecd" }
 request:
-  url: /userEdu/info
-  method: POST
-  json:
-    ${get_encrypt_data($data)}
+    url: /userEdu/info
+    method: POST
+    json: ${get_encrypt_data($data)}
 validate:
-  - eq: [status_code, 200]
+    - eq: [status_code, 200]
