@@ -1,0 +1,11 @@
+name: /api/v1/launcher/isConfig
+base_url: ${ENV(app4_test_env)}
+variables:
+    data: { "mProductId":5997,"mVendorId":7006 }
+    common_params_type: "app4_common_params"
+request:
+    url: /api/v1/app/config/camera
+    method: POST
+    json: ${get_encrypt_data($data, $common_params_type)}
+validate:
+    - eq: [status_code, 200]

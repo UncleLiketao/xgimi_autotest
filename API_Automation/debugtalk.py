@@ -2,6 +2,7 @@ import json
 import Aes_crypt
 import random
 
+
 # 辅助工具
 def errortracker(func):
     def wrapper(*args, **kwargs):
@@ -10,6 +11,7 @@ def errortracker(func):
         except:
             print("Error in {}".format(func.__name__))
             raise
+
     return wrapper
 
 
@@ -69,24 +71,34 @@ def random_list(func_name, length, *args, **kwargs):
     return [eval("{}(*{}, **{})".format(func_name, args, kwargs)) for _ in range(length)]
 
 
-# 公共参数
-commn_params = {
+# 不同应用的公共参数
+Launcher_common_params = {
     'gimiPid': 'EHFAJEF79TAU', 'gimiDevice': 'aosp_synsepalum_YN', 'xgimiDeviceName': 'synsepalum_Y',
     'deviceMac': '80-0B-52-02-44-26', 'systemVersion': 'v1.6.23', 'launcherVersionCode': 1510,
 }
+app4_common_params = {
+    "gimiPid": "EHFAJEF79TAU", "gimiDevice": "aosp_bennet_polo", "xgimiDeviceName": "synsepalum_Y",
+    "deviceMac": "80-0B-52-02-44-26", "systemVersion": "v1.6.23", "uiVersion": 1510,
+    "appName": "Android 6.0", "appVersion": 1510, "mProductId": 5997, "mVendorId": 7006
+}
 
 
-def get_encrypt_data(data=None):
+def get_encrypt_data(data=None, common_params_type=None):
     """
     用于接口请求参数的加密处理，传入字典格式的参数，添加公共参数后一起加密后返回
     :param data: 传入的data为字典格式
     :return: requests_data 规定格式的Json数据
     """
+    global common_params
     if data is None:
         data = {}
+    if common_params_type == "Launcher_common_params":
+        common_params = Launcher_common_params
+    elif common_params_type == "app4_common_params":
+        common_params = app4_common_params
     for key in data.keys():
-        commn_params[key] = data[key]
-    before_encrypt_data = json.dumps(commn_params)
+        common_params[key] = data[key]
+    before_encrypt_data = json.dumps(common_params)
     params = Aes_crypt.AesCrypt().aes_encode(before_encrypt_data)
     requests_data = {"params": "%s" % params}
     return requests_data
@@ -101,7 +113,6 @@ def get_nonencrypt_data(data: dict):
     requests_data = {"params": "%s" % json.dumps(data)}
     return requests_data
 
-
 # 实例
-# print(get_encrypt_data({"broadcastScene": "1"}))
+# print(get_encrypt_data({"broadcastScene": "1",}, "app4_common_params"))
 # print(get_nonencrypt_data({"sourceId": "10001", "sourceType": 2}))

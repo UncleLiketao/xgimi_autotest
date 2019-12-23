@@ -1,5 +1,5 @@
 name: /getVipPayByChannel
-base_url: ${ENV(Host1)}
+base_url: ${ENV(gossapi_test_env)}
 request:
     url: /getVipPayByChannel
     method: POST

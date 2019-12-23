@@ -1,7 +1,8 @@
 name: /api/v1/launcher/isConfig
-base_url: ${ENV(Host2)}
+base_url: ${ENV(goss_test_env)}
 variables:
     data: { "sourceId": "10001", "sourceType": 2 }
+    common_params_type: "Launcher_common_params"
 request:
     url: /api/v1/launcher/isConfig
     method: POST

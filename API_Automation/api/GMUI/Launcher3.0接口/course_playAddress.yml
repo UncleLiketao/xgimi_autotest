@@ -1,14 +1,15 @@
 name: /course/playAddress
-base_url: ${ENV(Host1)}
+base_url: ${ENV(gossapi_test_env)}
 variables:
     data:
         {
             "openId": "8c3484c9889525d2edb171b996686ecd",
             "coursewareId": "451511",
         }
+    common_params_type: "Launcher_common_params"
 request:
     url: /course/playAddress
     method: POST
-    json: ${get_encrypt_data($data)}
+    json: ${get_encrypt_data($data, $common_params_type)}
 validate:
     - eq: [status_code, 200]

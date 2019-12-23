@@ -1,11 +1,12 @@
 name: /child/filter/tags
-base_url: ${ENV(Host1)}
+base_url: ${ENV(gossapi_test_env)}
 variables:
     data:
         { "source": "iqiyi", "dockId": "1", "gender": "1", "ageDuration": "1" }
+    common_params_type: "Launcher_common_params"
 request:
     url: /child/filter/tags
     method: POST
-    json: ${get_encrypt_data($data)}
+    json: ${get_encrypt_data($data, $common_params_type)}
 validate:
     - eq: [status_code, 200]

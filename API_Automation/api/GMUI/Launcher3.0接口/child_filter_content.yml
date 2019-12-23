@@ -1,5 +1,5 @@
 name: /child/filter/content
-base_url: ${ENV(Host1)}
+base_url: ${ENV(gossapi_test_env)}
 variables:
     data:
         {
@@ -11,9 +11,10 @@ variables:
             "gender": "1",
             "ageDuration": "1",
         }
+    common_params_type: "Launcher_common_params"
 request:
     url: /child/filter/content
     method: POST
-    json: ${get_encrypt_data($data)}
+    json: ${get_encrypt_data($data, $common_params_type)}
 validate:
     - eq: [status_code, 200]
