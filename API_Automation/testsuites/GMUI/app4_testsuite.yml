@@ -1,0 +1,6 @@
+config:
+    name: basic function tests
+
+testcases:
+    app4 smoke test:
+        testcase: testcases/GMUI/app4接口/get_res_info_success.yml

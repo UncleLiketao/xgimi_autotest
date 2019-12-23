@@ -2,5 +2,5 @@ config:
     name: basic function tests
 
 testcases:
-    smoke test:
+    Launcher3.0 smoke test:
         testcase: testcases/GMUI/Launcher3.0接口/get_res_info_success.yml

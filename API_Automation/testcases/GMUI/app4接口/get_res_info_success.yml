@@ -1,0 +1,11 @@
+- config:
+    name: "app4验证接口数据请求"
+
+- test:
+    name: /api/v1/app/config/camera
+    api: api/GMUI/app4接口/api_v1_app_config_camera.yml
+    variables:
+        data: { "mProductId":5997,"mVendorId":7006 }
+    validate:
+      - eq: [status_code, 200]
+      - eq: [content.code, 200]
