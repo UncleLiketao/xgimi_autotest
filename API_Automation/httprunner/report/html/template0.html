@@ -232,22 +232,14 @@
                     <tr>
                       <th>{{key}}</th>
                       <td>
-                        {% if key == "headers" %}
-                          {% for header_key, header_value in req_resp.request.headers.items() %}
-                          <div>
-                            <strong>{{ header_key }}</strong>: {{ header_value }}
-                          </div>
-                          {% endfor %}
+                        {% if key in ["headers", "body"] %}
+                            <pre>{{ value | e }}</pre>
                         {% else %}
-                          {{value}}
+                            {{value}}
                         {% endif %}
                       </td>
                     </tr>
                   {% endfor %}
-                  <tr>
-                    <th>plain data</th>
-                    <td><pre>{{ record.step_detail.data | prettify_json | e }}</pre></td>
-                  </tr>
                 </table>
               </div>
 
@@ -258,20 +250,14 @@
                       <tr>
                         <th>{{key}}</th>
                         <td>
-                          {% if key == "headers" %}
-                            {% for header_key, header_value in req_resp.response.headers.items() %}
-                            <div>
-                              <strong>{{ header_key }}</strong>: {{ header_value }}
-                            </div>
-                            {% endfor %}
-                          {% elif key == "content" %}
+                          {% if key  == "headers" %}
+                            <pre>{{ value | e }}</pre>
+                          {% elif key == "body" %}
                             {% if "image" in req_resp.response.content_type %}
                               <img src="{{ req_resp.response.content }}" />
                             {% else %}
-                              {{ value }}
+                              <pre>{{ value | e }}</pre>
                             {% endif %}
-                          {% elif key in ["text", "json"] %}
-                              <pre>{{ value | prettify_json | e }}</pre>
                           {% else %}
                             {{ value }}
                           {% endif %}
@@ -283,15 +269,17 @@
               {% endfor %}
 
               <h3>Validators:</h3>
-              <div style="overflow: auto">
-                  <table>
+                <div style="overflow: auto">
+                {% set validate_extractors = meta_data.validators.validate_extractor %}
+                {% if validate_extractors %}
+                <table>
                     <tr>
                       <th>check</th>
                       <th>comparator</th>
                       <th>expect value</th>
                       <th>actual value</th>
                     </tr>
-                    {% for validator in meta_data.validators %}
+                    {% for validator in validate_extractors %}
                     <tr>
                       {% if validator.check_result == "pass" %}
                       <td class="passed">
@@ -307,7 +295,27 @@
                       <td>{{validator.check_value | e}}</td>
                     </tr>
                     {% endfor %}
-                  </table>
+                </table>
+                {% endif %}
+
+                {% set validate_script = meta_data.validators.validate_script %}
+                {% if validate_script %}
+                    <table>
+                        <tr>
+                            <th>validate script</th><th>exception</th>
+                        </tr>
+                        <tr>
+                            <td>{{validate_script.validate_script | safe}}</td>
+                            {% if validate_script.check_result == "pass" %}
+                            <td class="passed">
+                            {% elif validate_script.check_result == "fail" %}
+                            <td class="failed">
+                            {% endif %}
+                            {{validate_script.exception}}
+                            </td>
+                        </tr>
+                    </table>
+                {% endif %}
               </div>
 
               <h3>Statistics:</h3>

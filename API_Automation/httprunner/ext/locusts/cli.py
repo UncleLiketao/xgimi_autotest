@@ -2,6 +2,7 @@ try:
     # monkey patch ssl at beginning to avoid RecursionError when running locust.
     from gevent import monkey
     monkey.patch_ssl()
+    from locust import main as locust_main
 except ImportError:
     msg = """
 Locust is not installed, install first and try again.
@@ -18,6 +19,9 @@ import os
 import sys
 
 from httprunner import logger
+from httprunner.utils import init_sentry_sdk
+
+init_sentry_sdk()
 
 
 def parse_locustfile(file_path):
@@ -61,8 +65,7 @@ def gen_locustfile(testcase_file_path):
 
 
 def start_locust_main():
-    from locust.main import main
-    main()
+    locust_main.main()
 
 
 def start_master(sys_argv):

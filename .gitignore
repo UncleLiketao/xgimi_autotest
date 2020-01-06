@@ -9,3 +9,6 @@ __pycache__/
 # 框架输出文件
 API_Automation/logs
 API_Automation/reports
+
+# 调试使用
+API_Automation/httprunner/debug.py

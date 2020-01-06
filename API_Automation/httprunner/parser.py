@@ -2,9 +2,11 @@
 
 import ast
 import builtins
+import collections
+import json
 import re
 
-from httprunner import exceptions, utils, validator
+from httprunner import exceptions, utils, loader
 from httprunner.compat import basestring, numeric_types, str
 
 # use $$ to escape $ notation
@@ -13,6 +15,14 @@ dolloar_regex_compile = re.compile(r"\$\$")
 variable_regex_compile = re.compile(r"\$\{(\w+)\}|\$(\w+)")
 # function notation, e.g. ${func1($var_1, $var_3)}
 function_regex_compile = re.compile(r"\$\{(\w+)\(([\$\w\.\-/\s=,]*)\)\}")
+
+""" Store parse failed api/testcase/testsuite file path
+"""
+parse_failed_testfiles = {}
+
+
+def get_parse_failed_testfiles():
+    return parse_failed_testfiles
 
 
 def parse_string_value(str_value):
@@ -218,6 +228,166 @@ def parse_parameters(parameters, variables_mapping=None, functions_mapping=None)
     return utils.gen_cartesian_product(*parsed_parameters_list)
 
 
+def get_uniform_comparator(comparator):
+    """ convert comparator alias to uniform name
+    """
+    if comparator in ["eq", "equals", "==", "is"]:
+        return "equals"
+    elif comparator in ["lt", "less_than"]:
+        return "less_than"
+    elif comparator in ["le", "less_than_or_equals"]:
+        return "less_than_or_equals"
+    elif comparator in ["gt", "greater_than"]:
+        return "greater_than"
+    elif comparator in ["ge", "greater_than_or_equals"]:
+        return "greater_than_or_equals"
+    elif comparator in ["ne", "not_equals"]:
+        return "not_equals"
+    elif comparator in ["str_eq", "string_equals"]:
+        return "string_equals"
+    elif comparator in ["len_eq", "length_equals", "count_eq"]:
+        return "length_equals"
+    elif comparator in ["len_gt", "count_gt", "length_greater_than", "count_greater_than"]:
+        return "length_greater_than"
+    elif comparator in ["len_ge", "count_ge", "length_greater_than_or_equals",
+                        "count_greater_than_or_equals"]:
+        return "length_greater_than_or_equals"
+    elif comparator in ["len_lt", "count_lt", "length_less_than", "count_less_than"]:
+        return "length_less_than"
+    elif comparator in ["len_le", "count_le", "length_less_than_or_equals",
+                        "count_less_than_or_equals"]:
+        return "length_less_than_or_equals"
+    else:
+        return comparator
+
+
+def uniform_validator(validator):
+    """ unify validator
+
+    Args:
+        validator (dict): validator maybe in two formats:
+
+            format1: this is kept for compatiblity with the previous versions.
+                {"check": "status_code", "comparator": "eq", "expect": 201}
+                {"check": "$resp_body_success", "comparator": "eq", "expect": True}
+            format2: recommended new version, {comparator: [check_item, expected_value]}
+                {'eq': ['status_code', 201]}
+                {'eq': ['$resp_body_success', True]}
+
+    Returns
+        dict: validator info
+
+            {
+                "check": "status_code",
+                "expect": 201,
+                "comparator": "equals"
+            }
+
+    """
+    if not isinstance(validator, dict):
+        raise exceptions.ParamsError("invalid validator: {}".format(validator))
+
+    if "check" in validator and "expect" in validator:
+        # format1
+        check_item = validator["check"]
+        expect_value = validator["expect"]
+        comparator = validator.get("comparator", "eq")
+
+    elif len(validator) == 1:
+        # format2
+        comparator = list(validator.keys())[0]
+        compare_values = validator[comparator]
+
+        if not isinstance(compare_values, list) or len(compare_values) != 2:
+            raise exceptions.ParamsError("invalid validator: {}".format(validator))
+
+        check_item, expect_value = compare_values
+
+    else:
+        raise exceptions.ParamsError("invalid validator: {}".format(validator))
+
+    # uniform comparator, e.g. lt => less_than, eq => equals
+    comparator = get_uniform_comparator(comparator)
+
+    return {
+        "check": check_item,
+        "expect": expect_value,
+        "comparator": comparator
+    }
+
+
+def _convert_validators_to_mapping(validators):
+    """ convert validators list to mapping.
+
+    Args:
+        validators (list): validators in list
+
+    Returns:
+        dict: validators mapping, use (check, comparator) as key.
+
+    Examples:
+        >>> validators = [
+            {"check": "v1", "expect": 201, "comparator": "eq"},
+            {"check": {"b": 1}, "expect": 200, "comparator": "eq"}
+        ]
+        >>> print(_convert_validators_to_mapping(validators))
+        {
+            ("v1", "eq"): {"check": "v1", "expect": 201, "comparator": "eq"},
+            ('{"b": 1}', "eq"): {"check": {"b": 1}, "expect": 200, "comparator": "eq"}
+        }
+
+    """
+    validators_mapping = {}
+
+    for validator in validators:
+        if not isinstance(validator["check"], collections.Hashable):
+            check = json.dumps(validator["check"])
+        else:
+            check = validator["check"]
+
+        key = (check, validator["comparator"])
+        validators_mapping[key] = validator
+
+    return validators_mapping
+
+
+def extend_validators(raw_validators, override_validators):
+    """ extend raw_validators with override_validators.
+        override_validators will merge and override raw_validators.
+
+    Args:
+        raw_validators (dict):
+        override_validators (dict):
+
+    Returns:
+        list: extended validators
+
+    Examples:
+        >>> raw_validators = [{'eq': ['v1', 200]}, {"check": "s2", "expect": 16, "comparator": "len_eq"}]
+        >>> override_validators = [{"check": "v1", "expect": 201}, {'len_eq': ['s3', 12]}]
+        >>> extend_validators(raw_validators, override_validators)
+            [
+                {"check": "v1", "expect": 201, "comparator": "eq"},
+                {"check": "s2", "expect": 16, "comparator": "len_eq"},
+                {"check": "s3", "expect": 12, "comparator": "len_eq"}
+            ]
+
+    """
+
+    if not raw_validators:
+        return override_validators
+
+    elif not override_validators:
+        return raw_validators
+
+    else:
+        def_validators_mapping = _convert_validators_to_mapping(raw_validators)
+        ref_validators_mapping = _convert_validators_to_mapping(override_validators)
+
+        def_validators_mapping.update(ref_validators_mapping)
+        return list(def_validators_mapping.values())
+
+
 ###############################################################################
 ##  parse content with variables and functions mapping
 ###############################################################################
@@ -261,15 +431,18 @@ def get_mapping_function(function_name, functions_mapping):
         return functions_mapping[function_name]
 
     elif function_name in ["parameterize", "P"]:
-        from httprunner import loader
         return loader.load_csv_file
 
     elif function_name in ["environ", "ENV"]:
         return utils.get_os_environ
 
+    elif function_name in ["multipart_encoder", "multipart_content_type"]:
+        # extension for upload test
+        from httprunner.ext import uploader
+        return getattr(uploader, function_name)
+
     try:
         # check if HttpRunner builtin functions
-        from httprunner import loader
         built_in_functions = loader.load_builtin_functions()
         return built_in_functions[function_name]
     except KeyError:
@@ -279,8 +452,9 @@ def get_mapping_function(function_name, functions_mapping):
         # check if Python builtin functions
         return getattr(builtins, function_name)
     except AttributeError:
-        # is not builtin function
-        raise exceptions.FunctionNotFound("{} is not found.".format(function_name))
+        pass
+
+    raise exceptions.FunctionNotFound("{} is not found.".format(function_name))
 
 
 def parse_function_params(params):
@@ -338,6 +512,7 @@ def parse_function_params(params):
 class LazyFunction(object):
     """ call function lazily.
     """
+
     def __init__(self, function_meta, functions_mapping=None, check_variables_set=None):
         """ init LazyFunction object with function_meta
 
@@ -410,7 +585,7 @@ class LazyFunction(object):
         return "LazyFunction({}({}))".format(self.func_name, args_string)
 
     def __prepare_cache_key(self, args, kwargs):
-        return (self.func_name, repr(args), repr(kwargs))
+        return self.func_name, repr(args), repr(kwargs)
 
     def to_value(self, variables_mapping=None):
         """ parse lazy data with evaluated variables mapping.
@@ -434,6 +609,7 @@ cached_functions_mapping = {}
 class LazyString(object):
     """ evaluate string lazily, including functions and variables.
     """
+
     def __init__(self, raw_string, functions_mapping=None, check_variables_set=None, cached=False):
         """ make raw_string as lazy object with functions_mapping
             check if any variable undefined in check_variables_set
@@ -514,7 +690,7 @@ class LazyString(object):
             curr_position = match_start_position
             try:
                 # find next $ location
-                match_start_position = raw_string.index("$", curr_position+1)
+                match_start_position = raw_string.index("$", curr_position + 1)
                 remain_string = raw_string[curr_position:match_start_position]
             except ValueError:
                 remain_string = raw_string[curr_position:]
@@ -603,7 +779,6 @@ def prepare_lazy_data(content, functions_mapping=None, check_variables_set=None,
 
         functions_mapping = functions_mapping or {}
         check_variables_set = check_variables_set or set()
-        content = content.strip()
         content = LazyString(content, functions_mapping, check_variables_set, cached)
 
     return content
@@ -789,11 +964,11 @@ def _extend_with_api(test_dict, api_def_dict):
     # merge & override validators TODO: relocate
     def_raw_validators = api_def_dict.pop("validate", [])
     def_validators = [
-        validator.uniform_validator(_validator)
+        uniform_validator(_validator)
         for _validator in def_raw_validators
     ]
     ref_validators = test_dict.pop("validate", [])
-    test_dict["validate"] = validator.extend_validators(
+    test_dict["validate"] = extend_validators(
         def_validators,
         ref_validators
     )
@@ -818,13 +993,17 @@ def _extend_with_api(test_dict, api_def_dict):
     # merge & override setup_hooks
     def_setup_hooks = api_def_dict.pop("setup_hooks", [])
     ref_setup_hooks = test_dict.get("setup_hooks", [])
-    extended_setup_hooks = list(set(def_setup_hooks + ref_setup_hooks))
+    extended_setup_hooks_tmp = def_setup_hooks + ref_setup_hooks
+    extended_setup_hooks = list(set(extended_setup_hooks_tmp))
+    extended_setup_hooks.sort(key=extended_setup_hooks_tmp.index)
     if extended_setup_hooks:
         test_dict["setup_hooks"] = extended_setup_hooks
     # merge & override teardown_hooks
     def_teardown_hooks = api_def_dict.pop("teardown_hooks", [])
     ref_teardown_hooks = test_dict.get("teardown_hooks", [])
-    extended_teardown_hooks = list(set(def_teardown_hooks + ref_teardown_hooks))
+    extended_teardown_hooks_tmp = def_teardown_hooks + ref_teardown_hooks
+    extended_teardown_hooks = list(set(extended_teardown_hooks_tmp))
+    extended_teardown_hooks.sort(key=extended_teardown_hooks_tmp.index)
     if extended_teardown_hooks:
         test_dict["teardown_hooks"] = extended_teardown_hooks
 
@@ -846,7 +1025,8 @@ def _extend_with_testcase(test_dict, testcase_def_dict):
     """
     # override testcase config variables
     testcase_def_dict["config"].setdefault("variables", {})
-    testcase_def_variables = utils.ensure_mapping_format(testcase_def_dict["config"].get("variables", {}))
+    testcase_def_variables = utils.ensure_mapping_format(
+        testcase_def_dict["config"].get("variables", {}))
     testcase_def_variables.update(test_dict.pop("variables", {}))
     testcase_def_dict["config"]["variables"] = testcase_def_variables
 
@@ -858,8 +1038,8 @@ def _extend_with_testcase(test_dict, testcase_def_dict):
 
     # override name
     test_name = test_dict.pop("name", None) \
-        or testcase_def_dict["config"].pop("name", None) \
-        or "testcase name undefined"
+                or testcase_def_dict["config"].pop("name", None) \
+                or "testcase name undefined"
 
     # override testcase config name, output, etc.
     testcase_def_dict["config"].update(test_dict)
@@ -878,7 +1058,8 @@ def __prepare_config(config, project_mapping, session_variables_set=None):
     override_variables = utils.deepcopy_dict(project_mapping.get("variables", {}))
     functions = project_mapping.get("functions", {})
 
-    if isinstance(raw_config_variables, basestring) and function_regex_compile.match(raw_config_variables):
+    if isinstance(raw_config_variables, basestring) and function_regex_compile.match(
+            raw_config_variables):
         # config variables are generated by calling function
         # e.g.
         # "config": {
@@ -949,7 +1130,7 @@ def __prepare_testcase_tests(tests, config, project_mapping, session_variables_s
         if "validate" in test_dict:
             ref_raw_validators = test_dict.pop("validate", [])
             test_dict["validate"] = [
-                validator.uniform_validator(_validator)
+                uniform_validator(_validator)
                 for _validator in ref_raw_validators
             ]
 
@@ -974,6 +1155,8 @@ def __prepare_testcase_tests(tests, config, project_mapping, session_variables_s
 
             # 3, testcase_def config => testcase_def test_dict
             test_dict = _parse_testcase(test_dict, project_mapping, session_variables_set)
+            if not test_dict:
+                continue
 
         elif "api_def" in test_dict:
             # test_dict has API reference
@@ -981,12 +1164,17 @@ def __prepare_testcase_tests(tests, config, project_mapping, session_variables_s
             api_def_dict = test_dict.pop("api_def")
             _extend_with_api(test_dict, api_def_dict)
 
+        # verify priority: testcase teststep > testcase config
+        if "request" in test_dict:
+            if "verify" not in test_dict["request"]:
+                test_dict["request"]["verify"] = config_verify
+
+            if "upload" in test_dict["request"]:
+                from httprunner.ext.uploader import prepare_upload_test
+                prepare_upload_test(test_dict)
+
         # current teststep variables
         teststep_variables_set |= set(test_dict.get("variables", {}).keys())
-
-        # verify priority: testcase teststep > testcase config
-        if "request" in test_dict and "verify" not in test_dict["request"]:
-            test_dict["request"]["verify"] = config_verify
 
         # move extracted variable to session variables
         if "extract" in test_dict:
@@ -1040,21 +1228,34 @@ def _parse_testcase(testcase, project_mapping, session_variables_set=None):
 
     """
     testcase.setdefault("config", {})
-    prepared_config = __prepare_config(
-        testcase["config"],
-        project_mapping,
-        session_variables_set
-    )
-    prepared_testcase_tests = __prepare_testcase_tests(
-        testcase["teststeps"],
-        prepared_config,
-        project_mapping,
-        session_variables_set
-    )
-    return {
-        "config": prepared_config,
-        "teststeps": prepared_testcase_tests
-    }
+
+    try:
+        prepared_config = __prepare_config(
+            testcase["config"],
+            project_mapping,
+            session_variables_set
+        )
+        prepared_testcase_tests = __prepare_testcase_tests(
+            testcase["teststeps"],
+            prepared_config,
+            project_mapping,
+            session_variables_set
+        )
+        return {
+            "config": prepared_config,
+            "teststeps": prepared_testcase_tests
+        }
+    except (exceptions.MyBaseFailure, exceptions.MyBaseError):
+        testcase_type = testcase["type"]
+        testcase_path = testcase["path"]
+
+        global parse_failed_testfiles
+        if testcase_type not in parse_failed_testfiles:
+            parse_failed_testfiles[testcase_type] = []
+
+        parse_failed_testfiles[testcase_type].append(testcase_path)
+
+        return None
 
 
 def __get_parsed_testsuite_testcases(testcases, testsuite_config, project_mapping):
@@ -1110,6 +1311,7 @@ def __get_parsed_testsuite_testcases(testcases, testsuite_config, project_mappin
         parsed_testcase = testcase.pop("testcase_def")
         parsed_testcase.setdefault("config", {})
         parsed_testcase["path"] = testcase["testcase"]
+        parsed_testcase["type"] = "testcase"
         parsed_testcase["config"]["name"] = testcase_name
 
         if "weight" in testcase:
@@ -1155,6 +1357,8 @@ def __get_parsed_testsuite_testcases(testcases, testsuite_config, project_mappin
                     parameter_variables
                 )
                 parsed_testcase_copied = _parse_testcase(testcase_copied, project_mapping)
+                if not parsed_testcase_copied:
+                    continue
                 parsed_testcase_copied["config"]["name"] = parse_lazy_data(
                     parsed_testcase_copied["config"]["name"],
                     testcase_copied["config"]["variables"]
@@ -1163,6 +1367,8 @@ def __get_parsed_testsuite_testcases(testcases, testsuite_config, project_mappin
 
         else:
             parsed_testcase = _parse_testcase(parsed_testcase, project_mapping)
+            if not parsed_testcase:
+                continue
             parsed_testcase_list.append(parsed_testcase)
 
     return parsed_testcase_list
@@ -1260,6 +1466,8 @@ def parse_tests(tests_mapping):
         elif test_type == "testcases":
             for testcase in tests_mapping["testcases"]:
                 parsed_testcase = _parse_testcase(testcase, project_mapping)
+                if not parsed_testcase:
+                    continue
                 testcases.append(parsed_testcase)
 
         elif test_type == "apis":
@@ -1269,9 +1477,13 @@ def parse_tests(tests_mapping):
                     "config": {
                         "name": api_content.get("name")
                     },
-                    "teststeps": [api_content]
+                    "teststeps": [api_content],
+                    "path": api_content.pop("path", None),
+                    "type": api_content.pop("type", "api")
                 }
                 parsed_testcase = _parse_testcase(testcase, project_mapping)
+                if not parsed_testcase:
+                    continue
                 testcases.append(parsed_testcase)
 
     return testcases

@@ -7,8 +7,10 @@ import os
 import unittest
 import pprint
 
+from sentry_sdk import capture_message
+
 from httprunner import (__version__, exceptions, loader, logger, parser,
-                        report, runner, utils, validator)
+                        report, runner, utils)
 
 
 class HttpRunner(object):
@@ -141,7 +143,10 @@ class HttpRunner(object):
             logger.log_info("Start to run testcase: {}".format(testcase_name))
 
             result = self.unittest_runner.run(testcase)
-            tests_results.append((testcase, result))
+            if result.wasSuccessful():
+                tests_results.append((testcase, result))
+            else:
+                tests_results.insert(0, (testcase, result))
 
         return tests_results
 
@@ -186,6 +191,7 @@ class HttpRunner(object):
             report.aggregate_stat(summary["time"], testcase_summary["time"])
 
             # custom: add step detail to summary, by zheng.zhang
+            # step detail path in summary: summary.details[i].records[j].step_detail
             try:
                 teststeps = testcase.teststeps
                 for index_step, teststep in enumerate(teststeps):
@@ -202,6 +208,7 @@ class HttpRunner(object):
     def run_tests(self, tests_mapping):
         """ run testcase/testsuite data
         """
+        capture_message("start to run tests")
         project_mapping = tests_mapping.get("project_mapping", {})
         self.project_working_directory = project_mapping.get(
             "PWD", os.getcwd())
@@ -212,6 +219,10 @@ class HttpRunner(object):
         # parse tests
         self.exception_stage = "parse tests"
         parsed_testcases = parser.parse_tests(tests_mapping)
+        parse_failed_testfiles = parser.get_parse_failed_testfiles()
+        if parse_failed_testfiles:
+            logger.log_warning("parse failures occurred ...")
+            utils.dump_logs(parse_failed_testfiles, project_mapping, "parse_failed")
 
         if self.save_tests:
             utils.dump_logs(parsed_testcases, project_mapping, "parsed")
@@ -281,8 +292,7 @@ class HttpRunner(object):
         """
         # load tests
         self.exception_stage = "load tests"
-        tests_mapping = loader.load_tests(path, dot_env_path)
-        tests_mapping["project_mapping"]["test_path"] = path
+        tests_mapping = loader.load_cases(path, dot_env_path)
 
         if mapping:
             tests_mapping["project_mapping"]["variables"] = mapping
@@ -296,15 +306,19 @@ class HttpRunner(object):
             path_or_tests:
                 str: testcase/testsuite file/foler path
                 dict: valid testcase/testsuite data
+            dot_env_path (str): specified .env file path.
+            mapping (dict): if mapping is specified, it will override variables in config block.
 
         Returns:
             dict: result summary
 
         """
         logger.log_info("HttpRunner version: {}".format(__version__))
-        if validator.is_testcase_path(path_or_tests):
+        if loader.is_test_path(path_or_tests):
             return self.run_path(path_or_tests, dot_env_path, mapping)
-        elif validator.is_testcases(path_or_tests):
+        elif loader.is_test_content(path_or_tests):
+            project_working_directory = path_or_tests.get("project_mapping", {}).get("PWD", os.getcwd())
+            loader.init_pwd(project_working_directory)
             return self.run_tests(path_or_tests)
         else:
             print(path_or_tests)

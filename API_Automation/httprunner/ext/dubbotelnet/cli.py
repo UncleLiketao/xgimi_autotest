@@ -1,18 +1,23 @@
 # -*- coding: utf-8 -*-
 
-"""命令行命令，命令行参数定义与解析
+"""httprunner/cli.py 的拷贝
 """
 
 import argparse
 import os
 import sys
 
-# custom: add root path to environment, by zheng.zhang
+# custom: add root path to environment
 PACKAGE_DIR = os.path.dirname(__file__)
-ROOT_DIR = os.path.abspath(os.path.join(PACKAGE_DIR, '..'))
-sys.path.insert(0, ROOT_DIR)
+ROOT_DIR = os.path.abspath(os.path.join(PACKAGE_DIR, '../../..'))
+if sys.path[0] != ROOT_DIR:
+    sys.path.insert(0, ROOT_DIR)
 
 import sentry_sdk
+
+# 将httprunner/cli.py内容复制，并在import处加上此import，然后将
+# 执行语句中的 HttpRunner 改成 DubboRunner
+from httprunner.ext.dubbotelnet.runner import DubboRunner
 
 from httprunner import __description__, __version__, exceptions
 from httprunner.api import HttpRunner
@@ -105,7 +110,7 @@ def main():
         create_scaffold(project_name)
         sys.exit(0)
 
-    runner = HttpRunner(
+    runner = DubboRunner(
         failfast=args.failfast,
         save_tests=args.save_tests,
         log_level=args.log_level,
