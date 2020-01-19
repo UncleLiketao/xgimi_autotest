@@ -1,0 +1,20 @@
+name: 搜索页中搜索服务
+interface_type: dubbo
+variables:
+    data: {
+        "appId": "example",
+        "token": "example",
+        "currentPage": "example",
+        "from": "example",
+        "pageSize": "example",
+        "prderSegment": "example",
+        "tabId": "example",
+        "doFilter": "example",
+        "paginator": "example",
+    }
+request:
+    host: 10.40.33.172
+    port: 20107
+    service: com.xgimi.gmui.asset.open.gateway.common.service.GwCommonOpenSearchInTabRpcService
+    method: search
+    params: $data

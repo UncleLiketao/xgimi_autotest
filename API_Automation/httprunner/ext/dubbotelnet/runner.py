@@ -64,6 +64,17 @@ class DRunner(Runner):
         return self._run_test(test_dict)
 
     def _run_dubbo_test(self, test_dict):
+        # clear meta data first to ensure independence for each test
+        self.__clear_test_data()
+
+        # check skip
+        self._handle_skip_feature(test_dict)
+
+        # prepare
+        test_dict = utils.lower_test_dict_keys(test_dict)
+        test_variables = test_dict.get("variables", {})
+        self.session_context.init_test_variables(test_variables)
+
         # parse test request
         raw_request = test_dict.get('request', {})
         parsed_test_request = self.session_context.eval_content(raw_request)

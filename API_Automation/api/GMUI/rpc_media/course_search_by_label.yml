@@ -1,0 +1,19 @@
+name: 根据图书馆标签搜索课程
+interface_type: dubbo
+variable:
+    data: {
+        "appId": "example",
+        "token": "example",
+        "currentPage": "example",
+        "from": "example",
+        "pageSize": "example",
+        "orderSegment": "example",
+        "labelId": "example",
+        "paginator": "example"
+    }
+request:
+    host: 10.40.33.172
+    port: 20107
+    service: com.xgimi.gmui.asset.open.gateway.efun.service.GwEfunCourseOpenSearchRpcService
+    method: searchByLabel
+    params: $data

@@ -10,58 +10,59 @@
     
 - test:
     name: 查询图书馆
-    api: api/rpc_media/library_get_by_id.yml
+    api: api/GMUI/rpc_media/library_get_by_id.yml
     validate:
       - eq: [status_code, 200]
-      - eq: [content.code, 200]
 
 - test:
     name: 获取天气城市列表
-    api: api/rpc_media/get_weather_cities.yml
+    api: api/GMUI/rpc_media/get_weather_cities.yml
     validate:
       - eq: [status_code, 200]
 
-- test:
-    name: 获取设备天气信息
-    api: api/rpc_media/get_weather_by_county.yml
-    validate:
-      - eq: [status_code, 200]
+# - test:
+#     name: 获取设备天气信息
+#     api: api/rpc_media/get_weather_by_county.yml
+#     validate:
+#       - eq: [status_code, 200]
 
-- test:
-    name: 查询课程
-    api: api/rpc_media/course_query_by_id.yml
-    variables:
-        id: $contentId_courseDetail
-        recommendNum: 5
-    validate:
-      - eq: [status_code, 200]
+# - test:
+#     name: 查询课程
+#     api: api/rpc_media/course_query_by_id.yml
+#     variables:
+#         id: $contentId_courseDetail
+#         recommendNum: 5
+#     validate:
+#       - eq: [status_code, 200]
 
-- test:
-    name: 查询视频播放地址
-    api: api/rpc_media/course_get_play_url.yml
-    variables:
-        openId: $openid1
-        coursewareId: $coursewareId
-    validate:
-      - eq: [status_code, 200]
+# - test:
+#     name: 查询视频播放地址
+#     api: api/rpc_media/course_get_play_url.yml
+#     variables:
+#         openId: $openid1
+#         coursewareId: $coursewareId
+#     validate:
+#       - eq: [status_code, 200]
 
-- test:
-    name: 获取CIBN4K影视详情
-    api: api/rpc_media/get_fourK_cibn_video_detail.yml
-    validate:
-      - eq: [status_code, 200]
+# - test:
+#     name: 获取CIBN4K影视详情
+#     api: api/rpc_media/get_fourK_cibn_video_detail.yml
+#     validate:
+#       - eq: [status_code, 200]
 
-- test:
-    name: 获取4K影视详情
-    api: api/rpc_media/get_fourK_video_detail.yml
-    validate:
-      - eq: [status_code, 200]
+# - test:
+#     name: 获取4K影视详情
+#     api: api/rpc_media/get_fourK_video_detail.yml
+#     validate:
+#       - eq: [status_code, 200]
 
-- test:
-    name: 查询搜索页信息
-    api: api/GMUI/Launcher3.0接口/course_playAddress.yml
-    validate:
-      - eq: [status_code, 200]
+# - test:
+#     name: 查询搜索页信息
+#     api: api/GMUI/Launcher3.0接口/course_playAddress.yml
+#     validate:
+#       - eq: [status_code, 200]
+
+# ------
 
 # - test:
 #     name: /course/detail

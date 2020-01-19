@@ -1,16 +1,15 @@
 name: 获取4K影视详情
 interface_type: dubbo
 variables:
-    contentId: example
-    seriesCode: example
-    programCode: example
+    data: {
+        "contentId": "example",
+        "seriesCode": "example",
+        "programCode": "example"
+    }
+
 request:
     host: 10.40.33.172
     port: 20107
     service: com.xgimi.gmui.asset.fourk.gateway.api.FourKVideoManageRpcService
     method: getFourKVideoDetail
-    params: {
-        "contentId": $contentId,
-        "seriesCode": $seriesCode,
-        "programCode": $programCode
-    }
+    params: $data

@@ -1,10 +1,13 @@
 name: 查询视频播放地址
 interface_type: dubbo
 variable:
-    openId: example
-    coursewareId: example
+    data: {
+        "openId": "example",
+        "coursewareId": "example"
+    }
 request:
     host: 10.40.33.172
     port: 20107
     service: com.xgimi.gmui.asset.open.gateway.efun.service.GwEfunLibOpenQueryRpcService
     method: getPlayUrl
+    params: $data

@@ -1,5 +1,6 @@
 name: 获取天气城市列表
 interface_type: dubbo
+state: OK
 request:
     host: 10.40.33.172
     port: 20107

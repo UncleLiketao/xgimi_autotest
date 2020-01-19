@@ -48,11 +48,14 @@ class Dubbo:
         # TODO: Refactor the regex
         regex = "({}\\n\\r\\.sm \\d* :despale\\n\\r)(.*)".format(self.PROMPT[::-1])
         result = re.match(regex, raw_data[::-1], flags=re.DOTALL)
-        json_data = result.group(2)[::-1]
-        try:
-            json_object = json.loads(json_data)
-        except JSONDecodeError:
-            json_object = json_data
+
+        json_object = {"code": "extract error: raw_data", "data": raw_data}
+        if result:
+            json_data = result.group(2)[::-1]
+            try:
+                json_object = json.loads(json_data)
+            except JSONDecodeError:
+                json_object = {"code": "extract error: raw_data", "data": json_data}
 
         return json_object
 

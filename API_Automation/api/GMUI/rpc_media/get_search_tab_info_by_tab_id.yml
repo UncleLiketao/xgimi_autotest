@@ -1,12 +1,12 @@
 name: 查询搜索页信息
 interface_type: dubbo
 variables:
-    tabId: 1
+    data: {
+        "tabId": 1
+    }
 request:
     host: 10.40.33.172
     port: 20107
     service: com.xgimi.gmui.asset.open.gateway.common.service.GwCommonSearchTabInfoOpenQueryRpcService
     method: getSearchTabInfoByTabId
-    params: {
-        "tabId": $tabId
-    }
+    params: $data

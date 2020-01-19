@@ -1,12 +1,13 @@
 name: 查询图书馆
 interface_type: dubbo
-variable:
-    id: example
+variables:
+    data: {
+        "id": 1
+    }
 request:
     host: 10.40.33.172
     port: 20107
     service: com.xgimi.gmui.asset.open.gateway.efun.service.GwEfunLibOpenQueryRpcService
     method: getById
-    params: {
-        "id": $id
-    }
+    params: $data
+

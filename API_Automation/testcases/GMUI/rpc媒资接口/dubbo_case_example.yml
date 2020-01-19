@@ -3,7 +3,7 @@
 
 - test:
     name: get weather
-    api: api/rpc_media/get_weather_cities.yml
+    api: api/GMUI/rpc_media/get_weather_cities.yml
     validate:
       - eq: [status_code, 200]
 
