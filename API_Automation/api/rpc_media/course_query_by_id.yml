@@ -1,0 +1,10 @@
+name: 查询课程
+interface_type: dubbo
+variable:
+    id: 10015
+    recommendNum: 5
+request:
+    host: 10.40.33.172
+    port: 20107
+    service: com.xgimi.gmui.asset.open.gateway.efun.service.GwEfunCourseOpenQueryRpcService
+    method: queryById

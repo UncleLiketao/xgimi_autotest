@@ -1,0 +1,7 @@
+name: 获取天气城市列表
+interface_type: dubbo
+request:
+    host: 10.40.33.172
+    port: 20107
+    service: com.xgimi.gmui.asset.basic.gateway.weather.api.WeatherRpcService
+    method: getWeatherCities

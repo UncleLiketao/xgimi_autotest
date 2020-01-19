@@ -1,0 +1,12 @@
+name: 获取CIBN4K影视详情
+interface_type: dubbo
+variables:
+    contentId: 10015
+request:
+    host: 10.40.33.172
+    port: 20107
+    service: com.xgimi.gmui.asset.fourk.gateway.api.FourKVideoManageRpcService
+    method: getFourKVideoDetail
+    params: {
+        "contentId": $contentId
+    }

@@ -89,7 +89,7 @@ def get_encrypt_data(data=None, common_params_type=None):
     :param data: 传入的data为字典格式
     :return: requests_data 规定格式的Json数据
     """
-    global common_params
+    common_params = None
     if data is None:
         data = {}
     if common_params_type == "Launcher_common_params":

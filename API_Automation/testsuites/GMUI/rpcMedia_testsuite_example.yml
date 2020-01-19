@@ -1,0 +1,6 @@
+config:
+    name: basic function tests
+
+testcases:
+    dubbo testcase:
+        testcase: testcases/GMUI/rpc媒资接口/dubbo_case_example.yml

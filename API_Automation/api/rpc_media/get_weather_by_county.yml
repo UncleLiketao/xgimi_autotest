@@ -1,0 +1,12 @@
+name: 获取设备天气信息
+interface_type: dubbo
+variables:
+    id: example
+request:
+    host: 10.40.33.172
+    port: 20107
+    service: com.xgimi.gmui.asset.basic.gateway.weather.api.WeatherRpcService
+    method: getWeatherByCounty
+    params: {
+        "id": $id
+    }

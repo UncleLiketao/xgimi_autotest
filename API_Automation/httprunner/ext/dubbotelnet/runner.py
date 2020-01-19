@@ -8,7 +8,7 @@ import sys
 import time
 import unittest
 
-from httprunner import exceptions, logger, response, utils, parser
+from httprunner import exceptions, logger, response, utils, parser, loader
 from httprunner.client import HttpSession
 from httprunner.runner import Runner, HookTypeEnum
 from httprunner.context import SessionContext
@@ -17,6 +17,7 @@ from httprunner.utils import lower_dict_keys, omit_long_data
 from httprunner.api import HttpRunner
 from httprunner.report import HtmlTestResult
 
+from . import __version__
 
 ########################
 # runner.py            #
@@ -311,11 +312,10 @@ class DRunner(Runner):
             test_runner.export_variables(test_runner.export)
         )
 
+
 ########################
 # api.py               #
 ########################
-
-
 class DubboRunner(HttpRunner):
 
     def _add_tests(self, testcases):
@@ -385,3 +385,29 @@ class DubboRunner(HttpRunner):
             test_suite.addTest(loaded_testcase)
 
         return test_suite
+
+    def run(self, path_or_tests, dot_env_path=None, mapping=None):
+        """ main interface.
+
+        Args:
+            path_or_tests:
+                str: testcase/testsuite file/foler path
+                dict: valid testcase/testsuite data
+            dot_env_path (str): specified .env file path.
+            mapping (dict): if mapping is specified, it will override variables in config block.
+
+        Returns:
+            dict: result summary
+
+        """
+        logger.log_info("HttpRunner version: {}".format(__version__))
+        if loader.is_test_path(path_or_tests):
+            return self.run_path(path_or_tests, dot_env_path, mapping)
+        elif loader.is_test_content(path_or_tests):
+            project_working_directory = path_or_tests.get("project_mapping", {}).get("PWD", os.getcwd())
+            loader.init_pwd(project_working_directory)
+            return self.run_tests(path_or_tests)
+        else:
+            raise exceptions.ParamsError(
+                "Invalid testcase path or testcases: {}".format(path_or_tests))
+

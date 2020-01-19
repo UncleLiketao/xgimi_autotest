@@ -1,0 +1,14 @@
+- config:
+    name: "媒资rpc网关验证接口数据请求"
+
+- test:
+    name: get weather
+    api: api/rpc_media/get_weather_cities.yml
+    validate:
+      - eq: [status_code, 200]
+
+- test:
+    name: grade list
+    api: api/GMUI/Launcher3.0接口/grade_list.yml
+    validate:
+      - eq: [status_code, 200]

@@ -1,9 +1,0 @@
-name: getWeatherCities
-interface_type: dubbo
-request:
-    host: 10.40.33.172
-    port: 20107
-    service: ""
-    method: getWeatherCities
-validate:
-    - eq: [status_code, 200]

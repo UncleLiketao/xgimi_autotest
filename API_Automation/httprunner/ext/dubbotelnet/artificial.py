@@ -1,3 +1,6 @@
+"""重写的类
+"""
+
 from .dubbo_telnet import Dubbo
 import time
 from socket import timeout

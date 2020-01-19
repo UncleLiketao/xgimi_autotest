@@ -13,14 +13,12 @@ ROOT_DIR = os.path.abspath(os.path.join(PACKAGE_DIR, '../../..'))
 if sys.path[0] != ROOT_DIR:
     sys.path.insert(0, ROOT_DIR)
 
+# 将httprunner/cli.py内容复制，并在import处加上此import
+from httprunner.ext.dubbotelnet.runner import DubboRunner as HttpRunner
+
 import sentry_sdk
 
-# 将httprunner/cli.py内容复制，并在import处加上此import，然后将
-# 执行语句中的 HttpRunner 改成 DubboRunner
-from httprunner.ext.dubbotelnet.runner import DubboRunner
-
 from httprunner import __description__, __version__, exceptions
-from httprunner.api import HttpRunner
 from httprunner.compat import is_py2
 from httprunner.loader import load_cases
 from httprunner.logger import color_print, log_error
@@ -110,7 +108,7 @@ def main():
         create_scaffold(project_name)
         sys.exit(0)
 
-    runner = DubboRunner(
+    runner = HttpRunner(
         failfast=args.failfast,
         save_tests=args.save_tests,
         log_level=args.log_level,
@@ -130,6 +128,7 @@ def main():
             )
             err_code |= (0 if summary and summary["success"] else 1)
     except Exception as ex:
+        # raise ex
         color_print("!!!!!!!!!! exception stage: {} !!!!!!!!!!".format(runner.exception_stage), "YELLOW")
         color_print(str(ex), "RED")
         sentry_sdk.capture_exception(ex)

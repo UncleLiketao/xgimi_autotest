@@ -1,0 +1,9 @@
+name: 查询专题或者课程表
+interface_type: dubbo
+variable:
+    id: example
+request:
+    host: 10.40.33.172
+    port: 20107
+    service: com.xgimi.gmui.asset.open.gateway.efun.service.GwEfunSeminarOpenQueryRpcService
+    method: queryById
