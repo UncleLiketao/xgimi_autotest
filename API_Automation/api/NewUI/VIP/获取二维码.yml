@@ -1,0 +1,11 @@
+name: 获取二维码
+base_url: ${ENV(newui_mock_env)}
+variables:
+    data: { openid: "jkh54gh2j3g563gc673jh", mobile: "15770843323", product_id: "23", service: "edu.pay",
+    from: "edu"}
+request:
+    url: /vip/productQrCode
+    method: POST
+    json: $data
+validate:
+    - eq: [status_code, 200]

@@ -112,7 +112,9 @@ def get_nonencrypt_data(data: dict):
     """
     requests_data = {"params": "%s" % json.dumps(data)}
     return requests_data
-
+def get_data(data: dict):
+    requests_data = json.dumps(data)
+    return requests_data
 # 实例
 # print(get_encrypt_data({"broadcastScene": "1",}, "app4_common_params"))
 # print(get_nonencrypt_data({"sourceId": "10001", "sourceType": 2}))

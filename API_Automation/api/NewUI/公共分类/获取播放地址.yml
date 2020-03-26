@@ -1,0 +1,10 @@
+name: 获取播放地址
+base_url: ${ENV(newui_mock_env)}
+variables:
+    data: { contentId: 1, openid: 123, partner: 123}
+request:
+    url: /getVideoUrl
+    method: POST
+    json: $data
+validate:
+    - eq: [status_code, 200]

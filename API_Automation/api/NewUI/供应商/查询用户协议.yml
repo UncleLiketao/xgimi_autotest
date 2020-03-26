@@ -1,0 +1,10 @@
+name: 查询用户协议
+base_url: ${ENV(newui_mock_env)}
+variables:
+    data: { partner: "1", from: "1"}
+request:
+    url: /supplier/getProtocolBySupplierCode
+    method: POST
+    json: $data
+validate:
+    - eq: [status_code, 200]

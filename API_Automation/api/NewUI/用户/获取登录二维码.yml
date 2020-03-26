@@ -1,0 +1,10 @@
+name: 获取登录二维码
+base_url: ${ENV(newui_mock_env)}
+variables:
+    data: {}
+request:
+    url: /oauth/getLoginQRCode
+    method: GET
+    json: $data
+validate:
+    - eq: [status_code, 200]

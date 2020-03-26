@@ -1,0 +1,11 @@
+name: 加载Page页及更多
+base_url: ${ENV(newui_mock_env)}
+variables:
+    data: { pageId: "123", offset: 1, limit: 8,
+            vipInfo: {iqiyi: 0, mangguo: 1, youku: 0 , qq: 1, cibn_4k: 1, sikai: 0}}
+request:
+    url: /launcher/loadHomeTabs
+    method: POST
+    json: $data
+validate:
+    - eq: [status_code, 200]

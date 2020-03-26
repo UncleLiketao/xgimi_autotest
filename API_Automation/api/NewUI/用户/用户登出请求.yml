@@ -1,0 +1,10 @@
+name: 用户登出请求
+base_url: ${ENV(newui_mock_env)}
+variables:
+    data: {accessToken: "123", openId: "11"}
+request:
+    url: /oauth/logout
+    method: POST
+    json: $data
+validate:
+    - eq: [status_code, 200]

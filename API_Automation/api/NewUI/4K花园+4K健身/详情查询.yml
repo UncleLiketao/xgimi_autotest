@@ -1,0 +1,10 @@
+name: 详情查询
+base_url: ${ENV(newui_mock_env)}
+variables:
+    data: { contentId: "123", seriesCode: "123", programCode: "123"}
+request:
+    url: /getCibnSkUnifyVideoDetails
+    method: POST
+    json: $data
+validate:
+    - eq: [status_code, 200]

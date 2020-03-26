@@ -1,0 +1,10 @@
+name: 获取筛选器列表
+base_url: ${ENV(newui_mock_env)}
+variables:
+    data: { channelId: "1"}
+request:
+    url: /filter/filters/list
+    method: POST
+    json: $data
+validate:
+    - eq: [status_code, 200]

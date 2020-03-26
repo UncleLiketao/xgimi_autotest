@@ -1,0 +1,10 @@
+name: 课程表/单课件专题详情
+base_url: ${ENV(newui_mock_env)}
+variables:
+    data: { contentId: "123"}
+request:
+    url: /userEdu/giftVip
+    method: POST
+    json: $data
+validate:
+    - eq: [status_code, 200]

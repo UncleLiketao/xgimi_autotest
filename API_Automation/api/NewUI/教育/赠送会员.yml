@@ -1,0 +1,10 @@
+name: 赠送会员
+base_url: ${ENV(newui_mock_env)}
+variables:
+    data: { openid: "123", phone: "123"}
+request:
+    url: /userEdu/giftVip
+    method: POST
+    json: $data
+validate:
+    - eq: [status_code, 200]

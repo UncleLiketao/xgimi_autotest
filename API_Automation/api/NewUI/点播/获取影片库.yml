@@ -1,0 +1,10 @@
+name: 获取影片库
+base_url: ${ENV(newui_mock_env)}
+variables:
+    data: { page: "123", pageSize: "1", partner: "1"}
+request:
+    url: /getVideosByPage
+    method: POST
+    json: $data
+validate:
+    - eq: [status_code, 200]

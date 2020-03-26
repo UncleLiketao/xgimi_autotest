@@ -1,0 +1,10 @@
+name: 获取购买记录
+base_url: ${ENV(newui_mock_env)}
+variables:
+    data: { sourceFrom: "1", openid: "123", current: 1, pageSize: 2, status: "all" }
+request:
+    url: /vip/getPurchasedVideo
+    method: POST
+    json: $data
+validate:
+    - eq: [status_code, 200]

@@ -1,0 +1,10 @@
+name: 查询
+base_url: ${ENV(newui_mock_env)}
+variables:
+    data: { page: "123", pageSize: "123"}
+request:
+    url: /faq/list
+    method: POST
+    json: $data
+validate:
+    - eq: [status_code, 200]

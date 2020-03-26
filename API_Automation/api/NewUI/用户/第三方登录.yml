@@ -1,0 +1,11 @@
+name: 第三方登录
+base_url: ${ENV(newui_mock_env)}
+variables:
+    data: {thirdChannelId: "CIBN", openId: "123", userIp: "192.168.0.123", mobile: "158286323456",
+    userAgent: "123"}
+request:
+    url: /user/thirdLogin
+    method: POST
+    json: $data
+validate:
+    - eq: [status_code, 200]

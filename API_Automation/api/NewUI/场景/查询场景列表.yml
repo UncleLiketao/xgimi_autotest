@@ -1,0 +1,10 @@
+name: 获取活动信息
+base_url: ${ENV(newui_mock_env)}
+variables:
+    data: { deviceName: "ro.XGIMI.productName", gmuiVersion: "3.1.2.3" }
+request:
+    url: /scenario/query
+    method: POST
+    json: $data
+validate:
+    - eq: [status_code, 200]

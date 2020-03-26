@@ -1,0 +1,10 @@
+name: 获取编辑地址
+base_url: ${ENV(newui_mock_env)}
+variables:
+    data: {accessToken: "123", openId: "123"}
+request:
+    url: /oauth/getEditQRCode
+    method: GET
+    json: $data
+validate:
+    - eq: [status_code, 200]

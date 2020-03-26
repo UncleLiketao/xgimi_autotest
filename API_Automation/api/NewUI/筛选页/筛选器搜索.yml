@@ -1,0 +1,11 @@
+name: 筛选器搜索
+base_url: ${ENV(newui_mock_env)}
+variables:
+    data: { channelId: "1", page: "1", pageSize: "123",
+    filters: {k: "123", v: "123"}}
+request:
+    url: /filter/filters/detail
+    method: POST
+    json: $data
+validate:
+    - eq: [status_code, 200]

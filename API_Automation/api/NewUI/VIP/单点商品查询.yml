@@ -1,0 +1,10 @@
+name: 单点商品查询
+base_url: ${ENV(newui_mock_env)}
+variables:
+    data: { contentId: "jkh54gh2j3g563gc673jh", outContentId: "15770843323", partner: "edu", from: "edu"}
+request:
+    url: /vip/singleProductQuery
+    method: POST
+    json: $data
+validate:
+    - eq: [status_code, 200]

@@ -1,0 +1,10 @@
+name: 查询交易记录
+base_url: ${ENV(newui_mock_env)}
+variables:
+    data: { openId: "123", page: 1, pageSize: 8}
+request:
+    url: /purchase/transactions
+    method: POST
+    json: $data
+validate:
+    - eq: [status_code, 200]

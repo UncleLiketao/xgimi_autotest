@@ -1,0 +1,10 @@
+name: 查询生效氛围快照
+base_url: ${ENV(newui_mock_env)}
+variables:
+    data: {}
+request:
+    url: /atmosphere/getActive
+    method: POST
+    json: $data
+validate:
+    - eq: [status_code, 200]

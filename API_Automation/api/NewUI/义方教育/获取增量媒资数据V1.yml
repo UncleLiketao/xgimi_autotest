@@ -1,0 +1,11 @@
+name: 获取增量媒资数据V1
+base_url: ${ENV(yifangjiaoyu_env)}
+variables:
+    data: { channelCode: 100401, startTime: 1582992000000, type: COURSE,
+            sign: 813410838EA40464C9363A509F6F78291048603739776483F5929FF3C3E8326A }
+request:
+    url: /api/v1/resources
+    method: GET
+    json: $data
+validate:
+    - eq: [status_code, 200]
