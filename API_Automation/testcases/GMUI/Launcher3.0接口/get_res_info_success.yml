@@ -173,7 +173,7 @@
     variables:
         data: {"partner": "edu", "from": "edu"}
     extract:
-        product_id: content.data.0.product_id
+        productId: content.data.0.product_id
     validate:
       - eq: [status_code, 200]
       - eq: [content.code, 200]
@@ -191,7 +191,7 @@
     name: /vip/productQrCode
     api: api/GMUI/Launcher3.0接口/vip_productQrCode.yml
     variables:
-        data: {"openid": $openid1, "mobile": "15770843323", "product_id": $product_id,
+        data: {"openid": $openid1, "mobile": "15770843323", "product_id": $productId,
                "service": "edu.pay", "from": "edu"}
     validate:
       - eq: [status_code, 200]

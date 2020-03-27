@@ -17,7 +17,7 @@ from httprunner.api import HttpRunner
 
 runner = DubboRunner()
 os.chdir(os.path.dirname(__file__))
-summary = runner.run(r"D:\workspace\projects\github\xgimi_autotest\API_Automation\testcases\GMUI\rpc媒资接口\get_res_info_success.yml")
+summary = runner.run(r"D:\workspace\projects\github\xgimi_autotest\API_Automation\testcases\NewUI\debugcase.yml")
 
 
 # runner = HttpRunner()

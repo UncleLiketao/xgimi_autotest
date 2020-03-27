@@ -1,0 +1,10 @@
+name: 根据账号查询全部连续付费列表
+base_url: ${ENV(newui_mock_env)}
+variables:
+    data: { openId: "123"}
+request:
+    url: /purchase/queryContract
+    method: POST
+    json: $data
+validate:
+    - eq: [status_code, 200]

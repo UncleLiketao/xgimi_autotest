@@ -1,0 +1,13 @@
+name: 查询用户协议
+base_url: ${ENV(newui_test_env)}
+variables:
+    data: { partner: "edu", from: "edu"}
+    common_params_type: "NewUI_GossApi_common_params"
+    schema_path: D:\workspace\projects\github\xgimi_autotest\API_Automation\resources\jsonschema\getProtocolBySupplierCode.json
+request:
+    url: /supplier/getProtocolBySupplierCode
+    method: POST
+    json: ${get_encrypt_data($data, $common_params_type)}
+
+validate:
+    - eq: [status_code, 200]

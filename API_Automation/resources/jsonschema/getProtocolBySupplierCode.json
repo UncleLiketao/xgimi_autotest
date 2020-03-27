@@ -1,0 +1,27 @@
+{
+  "type": "object",
+  "required": [],
+  "properties": {
+    "code": {
+      "type": "number"
+    },
+    "msg": {
+      "type": "string"
+    },
+    "data": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

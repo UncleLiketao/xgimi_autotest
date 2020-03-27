@@ -1,0 +1,10 @@
+name: 根据账号+媒资源取消续费
+base_url: ${ENV(newui_mock_env)}
+variables:
+    data: { openId: "123", contractNo: "123"}
+request:
+    url: /purchase/cancelContract
+    method: POST
+    json: $data
+validate:
+    - eq: [status_code, 200]

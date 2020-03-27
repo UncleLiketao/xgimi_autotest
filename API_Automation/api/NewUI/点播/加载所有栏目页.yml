@@ -1,0 +1,10 @@
+name: 加载所有栏目页
+base_url: ${ENV(newui_mock_env)}
+variables:
+    data: {}
+request:
+    url: /vod/loadProgramaTabs
+    method: POST
+    json: $data
+validate:
+    - eq: [status_code, 200]

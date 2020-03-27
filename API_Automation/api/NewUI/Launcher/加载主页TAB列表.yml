@@ -1,0 +1,10 @@
+name: 加载主页TAB列表
+base_url: ${ENV(newui_mock_env)}
+variables:
+    data: { contentId: {iqiyi: 0, mangguo: 1, youku: 0 , qq: 1, cibn_4k: 1, sikai: 0}}
+request:
+    url: /launcher/loadHomeTabs
+    method: POST
+    json: $data
+validate:
+    - eq: [status_code, 200]

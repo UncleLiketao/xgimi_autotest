@@ -137,12 +137,12 @@ class HttpSession(requests.Session):
         self.meta_data["data"].pop()
         self.meta_data["data"].append(get_req_resp_record(resp_obj))
 
-    def update_last_req_resp_record(self, resp_obj):
-        """
-        update request and response info from Response() object.
-        """
-        self.meta_data["data"].pop()
-        self.meta_data["data"].append(self.get_req_resp_record(resp_obj))
+    # def update_last_req_resp_record(self, resp_obj):
+    #     """
+    #     update request and response info from Response() object.
+    #     """
+    #     self.meta_data["data"].pop()
+    #     self.meta_data["data"].append(self.get_req_resp_record(resp_obj))
 
     def request(self, method, url, name=None, **kwargs):
         """

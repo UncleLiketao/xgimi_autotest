@@ -190,16 +190,25 @@ class HttpRunner(object):
                 summary["stat"]["teststeps"], testcase_summary["stat"])
             report.aggregate_stat(summary["time"], testcase_summary["time"])
 
+            # ==================================================
             # custom: add step detail to summary, by zheng.zhang
             # step detail path in summary: summary.details[i].records[j].step_detail
-            try:
-                teststeps = testcase.teststeps
-                for index_step, teststep in enumerate(teststeps):
+            teststeps = testcase.teststeps
+            for index_step, teststep in enumerate(teststeps):
+                try:
                     step_detail = parser.parse_variables_mapping(teststep["variables"])
                     testcase_summary["records"][index_step]["step_detail"] = step_detail
-            except Exception as e:
-                print("add step detail to summary, in {}".format(__file__))
-                raise e
+                except exceptions.VariableNotFound as e:
+                    # TODO: deal with various built-in Exception
+                    testcase_summary["records"][index_step]["step_detail"] = {
+                        "internel error message": \
+                            "error during adding step details: VariableNotFound",
+                        "Exception message": e
+                    }
+                    # print("error during adding step detail to summary,  \
+                    #     in {}".format(__file__))
+            
+            # ==================================================
 
             summary["details"].append(testcase_summary)
 

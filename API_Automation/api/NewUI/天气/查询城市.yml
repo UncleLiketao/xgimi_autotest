@@ -1,0 +1,10 @@
+name: 查询城市
+base_url: ${ENV(newui_mock_env)}
+variables:
+    data: {}
+request:
+    url: /getWeatherCities
+    method: GET
+    json: $data
+validate:
+    - eq: [status_code, 200]

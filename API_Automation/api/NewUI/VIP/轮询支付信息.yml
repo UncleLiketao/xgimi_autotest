@@ -1,0 +1,10 @@
+name: 轮询支付信息
+base_url: ${ENV(newui_mock_env)}
+variables:
+    data: { key: "jkh54gh2j3g563gc673jh" }
+request:
+    url: /vip/productPayStatus
+    method: POST
+    json: $data
+validate:
+    - eq: [status_code, 200]

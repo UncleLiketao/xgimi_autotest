@@ -1,0 +1,10 @@
+name: 获取点播影片详情页
+base_url: ${ENV(newui_mock_env)}
+variables:
+    data: { contentId: "123", partner: "1"}
+request:
+    url: /vod/getVideoDetail
+    method: POST
+    json: $data
+validate:
+    - eq: [status_code, 200]

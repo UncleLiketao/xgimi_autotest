@@ -1,0 +1,10 @@
+name: 轮询用户信息
+base_url: ${ENV(newui_mock_env)}
+variables:
+    data: {key: "123"}
+request:
+    url: /user/loginStatus
+    method: POST
+    json: $data
+validate:
+    - eq: [status_code, 200]

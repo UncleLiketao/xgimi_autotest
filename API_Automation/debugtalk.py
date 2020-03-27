@@ -1,6 +1,8 @@
 import json
 import Aes_crypt
 import random
+from jsonschema import validate
+import json
 
 
 # 辅助工具
@@ -71,6 +73,19 @@ def random_list(func_name, length, *args, **kwargs):
     return [eval("{}(*{}, **{})".format(func_name, args, kwargs)) for _ in range(length)]
 
 
+def printOK():
+    print("OK")
+
+
+# teststep teardown hooks
+def teardown_hook_validate_jsonschema(response, schema_path):
+    print("validating...")
+    with open(schema_path, 'r') as schema_fd:
+        schema = json.load(schema_fd) # TODO
+        content = json.loads(response.content)
+        validate(content, schema)
+
+
 # 不同应用的公共参数
 Launcher_common_params = {
     'gimiPid': 'EHFAJEF79TAU', 'gimiDevice': 'aosp_synsepalum_YN', 'xgimiDeviceName': 'synsepalum_Y',
@@ -81,21 +96,31 @@ app4_common_params = {
     "deviceMac": "80-0B-52-02-44-26", "systemVersion": "v1.6.23", "uiVersion": 1510,
     "appName": "Android 6.0", "appVersion": 1510, "mProductId": 5997, "mVendorId": 7006
 }
+NewUI_GossApi_common_params = {
+    "gimiPid": "DSFASKDFASD2",
+    "xgimiDeviceName": "Product_z6b",
+    "gimiDevice": "Product_z6b",
+    "launcherVersionCode": 1,
+    "deviceMac": "00:0B:52:12:02:DB",
+    "systemVersion": "v12.2.69"
+}
 
-
+# 加密解密
 def get_encrypt_data(data=None, common_params_type=None):
     """
     用于接口请求参数的加密处理，传入字典格式的参数，添加公共参数后一起加密后返回
     :param data: 传入的data为字典格式
     :return: requests_data 规定格式的Json数据
     """
-    common_params = None
+    common_params = {}
     if data is None:
         data = {}
     if common_params_type == "Launcher_common_params":
         common_params = Launcher_common_params
     elif common_params_type == "app4_common_params":
         common_params = app4_common_params
+    elif common_params_type == "NewUI_GossApi_common_params":
+        common_params = NewUI_GossApi_common_params
     for key in data.keys():
         common_params[key] = data[key]
     before_encrypt_data = json.dumps(common_params)

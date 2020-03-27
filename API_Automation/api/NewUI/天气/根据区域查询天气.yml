@@ -1,0 +1,10 @@
+name: 根据账号+媒资源查询明细
+base_url: ${ENV(newui_mock_env)}
+variables:
+    data: { city: "成都", district: "1"}
+request:
+    url: /getWeatherByCounty
+    method: GET
+    json: $data
+validate:
+    - eq: [status_code, 200]

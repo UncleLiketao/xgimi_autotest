@@ -1,0 +1,12 @@
+- config:
+    name: "调试框架用例"
+    
+- test:
+    name: 查询用户协议
+    api: api/NewUI/供应商/查询用户协议.yml
+    variables:
+        data: { partner: "edu", from: "edu"}
+    validate:
+        - eq: [status_code, 200]
+    teardown_hooks:
+        - ${teardown_hook_validate_jsonschema($response, $schema_path)}

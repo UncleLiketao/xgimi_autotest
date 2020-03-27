@@ -1,0 +1,12 @@
+name: 设备注册
+base_url: ${ENV(newui_mock_env)}
+variables:
+    data: { userId: "123", serialNo: "123", deviceName: "客厅", xgimiProduct: "123",
+    roProduct: "123", roXgimiProduct: "123", deviceModel: "123", deviceModelName: "123", deviceVersion: "123",
+    gmuiVersion: "123", macAddress: "123", city: "123"}
+request:
+    url: /iot/register
+    method: POST
+    json: $data
+validate:
+    - eq: [status_code, 200]
