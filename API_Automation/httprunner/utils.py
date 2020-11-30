@@ -133,7 +133,7 @@ def query_json(json_content, query, delimiter='.'):
 
 
 def lower_dict_keys(origin_dict):
-    """ convert keys in dict to lower case
+    """ convert keys in dict to lower testcase
 
     Args:
         origin_dict (dict): mapping data structure
@@ -171,7 +171,7 @@ def lower_dict_keys(origin_dict):
 
 
 def lower_test_dict_keys(test_dict):
-    """ convert keys in test_dict to lower case, convertion will occur in two places:
+    """ convert keys in test_dict to lower testcase, convertion will occur in two places:
         1, all keys in test_dict;
         2, all keys in test_dict["request"]
     """

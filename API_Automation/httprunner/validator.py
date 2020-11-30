@@ -184,7 +184,7 @@ except Exception as ex:
 
             self.validation_results["validate_extractor"].append(validator_dict)
 
-            # restore validator args, in case of running multiple times
+            # restore validator args, in testcase of running multiple times
             validator.update_args(validator_args)
 
         if not validate_pass:
