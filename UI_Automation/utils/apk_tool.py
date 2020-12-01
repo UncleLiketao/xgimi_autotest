@@ -8,7 +8,7 @@ apk文件的读取信息
 '''
 
 
-class ApkInfo():
+class ApkInfo(object):
     def __init__(self, apkPath):
         self.apkPath = apkPath
 

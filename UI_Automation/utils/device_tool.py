@@ -63,5 +63,4 @@ def get_app_pix(devices):
 
 
 if __name__ == "__main__":
-    t = getDeviceInfo("4ed397ac")
-    print(t)
+    pass
