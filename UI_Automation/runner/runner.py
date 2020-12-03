@@ -69,7 +69,7 @@ if __name__ == '__main__':
             app["port"] = str(random.randint(4700, 4900))
             app["bport"] = str(random.randint(4700, 4900))
             app["systemPort"] = str(random.randint(4700, 4900))
-            app["app"] = ""
+            app["app"] = "com.xgimi.manager"
             l_devices.append(app)
 
         appium_server = AppiumServer(l_devices)
