@@ -2,6 +2,7 @@
 import sys
 import os
 import random
+import pytest
 import platform
 from utils.adb_tool import *
 from datetime import datetime
@@ -51,15 +52,15 @@ def runnerPool(getDevices):
     pool.join()
 
 
-def runnerCaseApp(devices):
-    os.popen("allure generate report/ -o result/ --clean")
-    os.popen("allure open -h 0.0.0.0 -p 8083 result/")
+def runnerCaseApp():
+    os.popen("pytest -s ../testcase")
+    # os.popen("allure generate report/ -o result/ --clean")
+    # os.popen("allure open -h 0.0.0.0 -p 8083 result/")
 
 
 if __name__ == '__main__':
 
     kill_adb()
-
     devicess = AndroidDebugBridge().attached_devices()
     if len(devicess) > 0:
         l_devices = []
@@ -75,6 +76,7 @@ if __name__ == '__main__':
         appium_server = AppiumServer(l_devices)
         appium_server.start_server()
         runnerPool(l_devices)
+        pytest.main(['-v', '--maxfail=30'])
         appium_server.stop_server(l_devices)
 
     else:
