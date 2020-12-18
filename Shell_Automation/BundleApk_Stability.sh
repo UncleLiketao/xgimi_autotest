@@ -1,5 +1,8 @@
 #!/bin/sh
 
+while (())
+do
+reboot
 echo "执行回复语出厂操作"
 echo "执行跳过开机向导操作"
 echo "捕获下载任务job"
@@ -9,3 +12,34 @@ echo "开机后检查inui版本、flag值和status状态码"
 echo "开机后校验升级应用版本"
 echo "遍历启动应用并截图"
 循环执行以上所有操作
+
+function {
+
+}
+
+funciton version_check {
+  }
+
+function app_screenshot{
+  }
+
+while [ flag = 1 ];
+
+do
+  记录升级次数
+  reboot
+    
+done
+
+while [ 重启完成]; do
+  info_record
+  version_check
+  app_screenshot
+done
+
+
+funciton version_check {
+  }
+  
+function app_screenshot{
+  }
