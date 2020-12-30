@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-@ Author：YueC
-@ Description：driver 驱动
-"""
-
 from appium import webdriver
 from base.action import ElementActions
 from utils import shell
@@ -19,8 +14,8 @@ class Singleton(object):
         if not hasattr(cls, '_instance'):
             udid = Device.get_android_devices()[0]
             host = "http://localhost:4723/wd/hub"
-            desired_caps = {'appActivity': '.SplashActivity',
-                            'appPackage': 'com.sina.weibo',
+            desired_caps = {'appActivity': '.ui.activitys.MainActivity',
+                            'appPackage': 'com.xgimi.manager',
                             'autoGrantPermissions': True,
                             'autoLaunch': False,
                             'automationName': 'UiAutomator2',

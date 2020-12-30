@@ -2,7 +2,6 @@
 import sys
 import os
 import random
-import pytest
 import platform
 from utils.adb_tool import *
 from datetime import datetime
@@ -39,10 +38,8 @@ def runnerPool(getDevices):
         _initApp["port"] = getDevices[i]["port"]
         _initApp["automationName"] = "uiautomator2"
         _initApp["systemPort"] = getDevices[i]["systemPort"]
-        _initApp["app"] = getDevices[i]["app"]
-        apkInfo = ApkInfo(_initApp["app"])
-        _initApp["appPackage"] = apkInfo.getApkBaseInfo()[0]
-        _initApp["appActivity"] = apkInfo.getApkActivity()
+        _initApp["appPackage"] = getDevices[i]["appPackage"]
+        _initApp["appActivity"] = getDevices[i]["appActivity"]
         _pool.append(_initApp)
         devices_Pool.append(_initApp)
 
@@ -52,15 +49,15 @@ def runnerPool(getDevices):
     pool.join()
 
 
-def runnerCaseApp():
-    os.popen("pytest -s ../testcase")
-    # os.popen("allure generate report/ -o result/ --clean")
-    # os.popen("allure open -h 0.0.0.0 -p 8083 result/")
+def runnerCaseApp(devices):
+    os.popen("allure generate report/ -o result/ --clean")
+    os.popen("allure open -h 0.0.0.0 -p 8083 result/")
 
 
 if __name__ == '__main__':
 
-    kill_adb()
+    # kill_adb()
+
     devicess = AndroidDebugBridge().attached_devices()
     if len(devicess) > 0:
         l_devices = []
@@ -70,13 +67,13 @@ if __name__ == '__main__':
             app["port"] = str(random.randint(4700, 4900))
             app["bport"] = str(random.randint(4700, 4900))
             app["systemPort"] = str(random.randint(4700, 4900))
-            app["app"] = "com.xgimi.manager"
+            app["appPackage"] = "com.xgimi.manager"
+            app["appActivity"] = ".ui.activitys.MainActivity"
             l_devices.append(app)
 
         appium_server = AppiumServer(l_devices)
         appium_server.start_server()
         runnerPool(l_devices)
-        pytest.main(['-v', '--maxfail=30'])
         appium_server.stop_server(l_devices)
 
     else:

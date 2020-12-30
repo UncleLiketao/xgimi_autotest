@@ -23,9 +23,11 @@ class AndroidDebugBridge(object):
 
     # 检查设备
     def attached_devices(self):
+        # result = self.call_adb("devices")
         devices = []
         result = subprocess.Popen("adb devices", shell=True, stdout=subprocess.PIPE,
                                   stderr=subprocess.PIPE).stdout.readlines()
+
         for item in result:
             t = item.decode().split("\tdevice")
             if len(t) >= 2:
@@ -75,12 +77,14 @@ class AndroidDebugBridge(object):
     # 根据包名得到进程id
     def get_app_pid(self, pkg_name):
         string = self.call_adb("shell ps | grep " + pkg_name)
+        # print(string)
         if string == '':
             return "the process doesn't exist."
         result = string.split(" ")
+        # print(result[4])
         return result[4]
 
 
 if __name__ == '__main__':
-    result = AndroidDebugBridge().attached_devices()
-    print(result)
+    reuslt = AndroidDebugBridge().attached_devices()
+    print(reuslt)

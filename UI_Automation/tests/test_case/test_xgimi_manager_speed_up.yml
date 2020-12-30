@@ -1,0 +1,19 @@
+test_xgimi_manager_speed_up:
+  -
+    method: launchApp
+  -
+    method: click
+    element: com.xgimi.manager:id/immediate_optimization_bt
+    name: 一键加速按钮
+  -
+    method: sleep
+    element: 3
+  -
+    method: get_text
+    element: com.xgimi.manager:id/garbage_size_reminding
+    name: 清理提示
+    assert_text: 您的系统很干净，请继续保持
+  -
+    method: screenshot_element
+    element: com.xgimi.manager:id/garbage_size_reminding
+    name: 清理完成后提示文案截图

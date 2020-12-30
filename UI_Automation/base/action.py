@@ -1,8 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-@ Author：YueC
-@ Description：Appium api 封装层
-"""
 
 import time
 import allure
@@ -11,7 +7,7 @@ from appium.webdriver.common.touch_action import TouchAction
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 
-from utils import L
+from utils.log import Log as L
 
 
 def Ldict(element, type, name=None, text=None, time=5, index=0):
@@ -48,10 +44,8 @@ class ElementActions:
     def reset(self, driver: webdriver.Remote):
         """单例模式下,当driver变动的时候,需要重置一下driver
         单例模式开启装饰器singleton
-
         Args:
             driver: driver
-
         """
         self.driver = driver
         self.width = self.driver.get_window_size()['width']
@@ -62,7 +56,6 @@ class ElementActions:
         """
         appium --relaxed-security 方式启动
         adb_shell('ps',['|','grep','android'])
-
         :param command:命令
         :param args:参数
         :param includeStderr: 为 True 则抛异常
@@ -134,7 +127,6 @@ class ElementActions:
 
     def set_number_by_soft_keyboard(self, nums):
         """模仿键盘输入数字,主要用在输入取餐码类似场景
-
         Args:
             nums: 数字
         """
@@ -223,7 +215,6 @@ class ElementActions:
         :param method: 传入的方法 method(action) ,如果返回为True,则终止刷新
         :param speed: 滑动速度 ms
         :return:
-
         """
         if count == 1:
             self.sleep(1)
@@ -345,7 +336,6 @@ class ElementActions:
         Args:
             arg: event_list key
             num: KEYCODE_NUM 时用到对应数字
-
         """
         event_list = {'KEYCODE_HOME': 3, 'KEYCODE_BACK': 4, 'KEYCODE_MENU': 82, 'KEYCODE_NUM': 8, 'KEYCODE_ENTER': 66,
                       'KEYCODE_SEARCH': 84}
