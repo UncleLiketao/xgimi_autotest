@@ -63,9 +63,9 @@ def __extend_with_api_ref(raw_testinfo):
 
 
 def __extend_with_testcase_ref(raw_testinfo):
-    """ extend with testcase reference
+    """ extend with test_case reference
     """
-    testcase_path = raw_testinfo["testcase"]
+    testcase_path = raw_testinfo["test_case"]
 
     if testcase_path not in tests_def_mapping["testcases"]:
         # make compatible with Windows/Linux
@@ -84,7 +84,7 @@ def __extend_with_testcase_ref(raw_testinfo):
             testcase_dict = load_testcase_v2(loaded_testcase)
         else:
             raise exceptions.FileFormatError(
-                "Invalid format testcase: {}".format(testcase_path))
+                "Invalid format test_case: {}".format(testcase_path))
 
         tests_def_mapping["testcases"][testcase_path] = testcase_dict
     else:
@@ -94,8 +94,8 @@ def __extend_with_testcase_ref(raw_testinfo):
 
 
 def load_teststep(raw_testinfo):
-    """ load testcase step content.
-        teststep maybe defined directly, or reference api/testcase.
+    """ load test_case step content.
+        teststep maybe defined directly, or reference api/test_case.
 
     Args:
         raw_testinfo (dict): test data, maybe in 3 formats.
@@ -107,10 +107,10 @@ def load_teststep(raw_testinfo):
                 "validate": [],
                 "extract": {}
             }
-            # testcase reference
+            # test_case reference
             {
                 "name": "add product to cart",
-                "testcase": "/path/to/testcase",
+                "test_case": "/path/to/test_case",
                 "variables": {}
             }
             # define directly
@@ -134,8 +134,8 @@ def load_teststep(raw_testinfo):
     # elif "func" in raw_testinfo:
     #     pass
 
-    # reference testcase
-    elif "testcase" in raw_testinfo:
+    # reference test_case
+    elif "test_case" in raw_testinfo:
         __extend_with_testcase_ref(raw_testinfo)
 
     # define directly
@@ -146,10 +146,10 @@ def load_teststep(raw_testinfo):
 
 
 def load_testcase(raw_testcase):
-    """ load testcase with api/testcase references.
+    """ load test_case with api/test_case references.
 
     Args:
-        raw_testcase (list): raw testcase content loaded from JSON/YAML file:
+        raw_testcase (list): raw test_case content loaded from JSON/YAML file:
             [
                 # config part
                 {
@@ -168,7 +168,7 @@ def load_testcase(raw_testcase):
             ]
 
     Returns:
-        dict: loaded testcase content
+        dict: loaded test_case content
             {
                 "config": {},
                 "teststeps": [test11, test12]
@@ -197,10 +197,10 @@ def load_testcase(raw_testcase):
 
 
 def load_testcase_v2(raw_testcase):
-    """ load testcase in format version 2.
+    """ load test_case in format version 2.
 
     Args:
-        raw_testcase (dict): raw testcase content loaded from JSON/YAML file:
+        raw_testcase (dict): raw test_case content loaded from JSON/YAML file:
             {
                 "config": {
                     "name": "xxx",
@@ -219,7 +219,7 @@ def load_testcase_v2(raw_testcase):
             }
 
     Returns:
-        dict: loaded testcase content
+        dict: loaded test_case content
             {
                 "config": {},
                 "teststeps": [test11, test12]
@@ -236,7 +236,7 @@ def load_testcase_v2(raw_testcase):
 
 
 def load_testsuite(raw_testsuite):
-    """ load testsuite with testcase references.
+    """ load testsuite with test_case references.
         support two different formats.
 
     Args:
@@ -249,7 +249,7 @@ def load_testsuite(raw_testsuite):
                 }
                 "testcases": {
                     "testcase1": {
-                        "testcase": "/path/to/testcase",
+                        "test_case": "/path/to/test_case",
                         "variables": {...},
                         "parameters": {...}
                     },
@@ -266,7 +266,7 @@ def load_testsuite(raw_testsuite):
                 "testcases": [
                     {
                         "name": "testcase1",
-                        "testcase": "/path/to/testcase",
+                        "test_case": "/path/to/test_case",
                         "variables": {...},
                         "parameters": {...}
                     },
@@ -310,7 +310,7 @@ def load_testsuite(raw_testsuite):
 
 
 def load_test_file(path):
-    """ load test file, file maybe testcase/testsuite/api
+    """ load test file, file maybe test_case/testsuite/api
 
     Args:
         path (str): test file path
@@ -326,10 +326,10 @@ def load_test_file(path):
                 "request": {}
             }
 
-            # testcase
+            # test_case
             {
                 "path": path,
-                "type": "testcase",
+                "type": "test_case",
                 "config": {},
                 "teststeps": []
             }
@@ -354,10 +354,10 @@ def load_test_file(path):
             loaded_content["type"] = "testsuite"
 
         elif "teststeps" in raw_content:
-            # file_type: testcase (format version 2)
+            # file_type: test_case (format version 2)
             loaded_content = load_testcase_v2(raw_content)
             loaded_content["path"] = path
-            loaded_content["type"] = "testcase"
+            loaded_content["type"] = "test_case"
 
         elif "request" in raw_content:
             # file_type: api
@@ -371,11 +371,11 @@ def load_test_file(path):
             raise exceptions.FileFormatError("Invalid test file format!")
 
     elif isinstance(raw_content, list) and len(raw_content) > 0:
-        # file_type: testcase
+        # file_type: test_case
         # make compatible with version < 2.2.0
         loaded_content = load_testcase(raw_content)
         loaded_content["path"] = path
-        loaded_content["type"] = "testcase"
+        loaded_content["type"] = "test_case"
 
     else:
         # invalid format
@@ -423,18 +423,18 @@ def load_project_data(test_path, dot_env_path=None):
 
 
 def load_cases(path, dot_env_path=None):
-    """ load testcases from file path, extend and merge with api/testcase definitions.
+    """ load testcases from file path, extend and merge with api/test_case definitions.
 
     Args:
-        path (str): testcase/testsuite file/foler path.
+        path (str): test_case/testsuite file/foler path.
             path could be in 2 types:
                 - absolute/relative file path
                 - absolute/relative folder path
         dot_env_path (str): specified .env file path
 
     Returns:
-        dict: tests mapping, include project_mapping and testcases.
-              each testcase is corresponding to a file.
+        dict: test_case mapping, include project_mapping and testcases.
+              each test_case is corresponding to a file.
             {
                 "project_mapping": {
                     "PWD": "XXXXX",
@@ -442,7 +442,7 @@ def load_cases(path, dot_env_path=None):
                     "env": {}
                 },
                 "testcases": [
-                    {   # testcase data structure
+                    {   # test_case data structure
                         "config": {
                             "name": "desc1",
                             "path": "testcase1_path",
@@ -460,7 +460,7 @@ def load_cases(path, dot_env_path=None):
                             test_dict_2   # another test dict
                         ]
                     },
-                    testcase_2_dict     # another testcase dict
+                    testcase_2_dict     # another test_case dict
                 ],
                 "testsuites": [
                     {   # testsuite data structure
@@ -493,7 +493,7 @@ def load_cases(path, dot_env_path=None):
             pass
         elif loaded_content["type"] == "testsuite":
             tests_mapping.setdefault("testsuites", []).append(loaded_content)
-        elif loaded_content["type"] == "testcase":
+        elif loaded_content["type"] == "test_case":
             tests_mapping.setdefault("testcases", []).append(loaded_content)
         elif loaded_content["type"] == "api":
             tests_mapping.setdefault("apis", []).append(loaded_content)

@@ -1,5 +1,5 @@
 config:
-    name: basic function tests
+    name: basic function test_case
 
 testcases:
     app4 smoke test:

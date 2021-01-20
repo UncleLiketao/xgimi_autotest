@@ -4,7 +4,7 @@ from httprunner import exceptions, logger, parser
 
 
 class Validator(object):
-    """Validate tests
+    """Validate test_case
 
     Attributes:
         validation_results (dict): store validation results,
@@ -184,7 +184,7 @@ except Exception as ex:
 
             self.validation_results["validate_extractor"].append(validator_dict)
 
-            # restore validator args, in testcase of running multiple times
+            # restore validator args, in test_case of running multiple times
             validator.update_args(validator_args)
 
         if not validate_pass:

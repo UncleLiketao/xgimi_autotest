@@ -25,7 +25,7 @@ init_sentry_sdk()
 
 
 def parse_locustfile(file_path):
-    """ parse testcase file and return locustfile path.
+    """ parse test_case file and return locustfile path.
         if file_path is a Python file, assume it is a locustfile
         if file_path is a YAML/JSON file, convert it to locustfile
     """
@@ -130,7 +130,7 @@ def main():
 
     logger.setup_logger(loglevel)
 
-    # get testcase file path
+    # get test_case file path
     try:
         testcase_index = get_arg_index("-f", "--locustfile")
         assert testcase_index and testcase_index < len(sys.argv)

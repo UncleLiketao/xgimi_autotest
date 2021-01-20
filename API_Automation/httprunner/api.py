@@ -33,7 +33,7 @@ class HttpRunner(object):
 
         Args:
             failfast (bool): stop the test run on the first error or failure.
-            save_tests (bool): save loaded/parsed tests to JSON file.
+            save_tests (bool): save loaded/parsed test_case to JSON file.
             log_level (str): logging level.
             log_file (str): log file path.
 
@@ -52,7 +52,7 @@ class HttpRunner(object):
         self.project_working_directory = None
 
     def _add_tests(self, testcases):
-        """ initialize testcase with Runner() and add to test suite.
+        """ initialize test_case with Runner() and add to test suite.
 
         Args:
             testcases (list): testcases list.
@@ -62,7 +62,7 @@ class HttpRunner(object):
 
         """
         def _add_test(test_runner, test_dict):
-            """ add test to testcase.
+            """ add test to test_case.
             """
 
             def test(self):
@@ -74,7 +74,7 @@ class HttpRunner(object):
                     self.meta_datas = test_runner.meta_datas
 
             if "config" in test_dict:
-                # run nested testcase
+                # run nested test_case
                 test.__doc__ = test_dict["config"].get("name")
                 variables = test_dict["config"].get("variables", {})
             else:
@@ -110,7 +110,7 @@ class HttpRunner(object):
                         "times should be digit, given: {}".format(times))
 
                 for times_index in range(times):
-                    # suppose one testcase should not have more than 9999 steps,
+                    # suppose one test_case should not have more than 9999 steps,
                     # and one step should not run more than 999 times.
                     test_method_name = 'test_{:04}_{:03}'.format(
                         index, times_index)
@@ -127,7 +127,7 @@ class HttpRunner(object):
         return test_suite
 
     def _run_suite(self, test_suite):
-        """ run tests in test_suite
+        """ run test_case in test_suite
 
         Args:
             test_suite: unittest.TestSuite()
@@ -140,7 +140,7 @@ class HttpRunner(object):
 
         for testcase in test_suite:
             testcase_name = testcase.config.get("name")
-            logger.log_info("Start to run testcase: {}".format(testcase_name))
+            logger.log_info("Start to run test_case: {}".format(testcase_name))
 
             result = self.unittest_runner.run(testcase)
             if result.wasSuccessful():
@@ -154,7 +154,7 @@ class HttpRunner(object):
         """ aggregate results
 
         Args:
-            testcases_results (list): list of (testcase, result)
+            testcases_results (list): list of (test_case, result)
 
         """
         summary = {
@@ -215,9 +215,9 @@ class HttpRunner(object):
         return summary
 
     def run_tests(self, tests_mapping):
-        """ run testcase/testsuite data
+        """ run test_case/testsuite data
         """
-        capture_message("start to run tests")
+        capture_message("start to run test_case")
         project_mapping = tests_mapping.get("project_mapping", {})
         self.project_working_directory = project_mapping.get(
             "PWD", os.getcwd())
@@ -225,8 +225,8 @@ class HttpRunner(object):
         if self.save_tests:
             utils.dump_logs(tests_mapping, project_mapping, "loaded")
 
-        # parse tests
-        self.exception_stage = "parse tests"
+        # parse test_case
+        self.exception_stage = "parse test_case"
         parsed_testcases = parser.parse_tests(tests_mapping)
         parse_failed_testfiles = parser.get_parse_failed_testfiles()
         if parse_failed_testfiles:
@@ -236,8 +236,8 @@ class HttpRunner(object):
         if self.save_tests:
             utils.dump_logs(parsed_testcases, project_mapping, "parsed")
 
-        # add tests to test suite
-        self.exception_stage = "add tests to test suite"
+        # add test_case to test suite
+        self.exception_stage = "add test_case to test suite"
         test_suite = self._add_tests(parsed_testcases)
 
         # run test suite
@@ -262,7 +262,7 @@ class HttpRunner(object):
         """ get variables and output
         Returns:
             list: list of variables and output.
-                if tests are parameterized, list items are corresponded to parameters.
+                if test_case are parameterized, list items are corresponded to parameters.
 
                 [
                     {
@@ -276,7 +276,7 @@ class HttpRunner(object):
                     {...}
                 ]
 
-            None: returns None if tests not started or finished or corrupted.
+            None: returns None if test_case not started or finished or corrupted.
 
         """
         if not self._summary:
@@ -288,10 +288,10 @@ class HttpRunner(object):
         ]
 
     def run_path(self, path, dot_env_path=None, mapping=None):
-        """ run testcase/testsuite file or folder.
+        """ run test_case/testsuite file or folder.
 
         Args:
-            path (str): testcase/testsuite file/foler path.
+            path (str): test_case/testsuite file/foler path.
             dot_env_path (str): specified .env file path.
             mapping (dict): if mapping is specified, it will override variables in config block.
 
@@ -299,8 +299,8 @@ class HttpRunner(object):
             dict: result summary
 
         """
-        # load tests
-        self.exception_stage = "load tests"
+        # load test_case
+        self.exception_stage = "load test_case"
         tests_mapping = loader.load_cases(path, dot_env_path)
 
         if mapping:
@@ -313,8 +313,8 @@ class HttpRunner(object):
 
         Args:
             path_or_tests:
-                str: testcase/testsuite file/foler path
-                dict: valid testcase/testsuite data
+                str: test_case/testsuite file/foler path
+                dict: valid test_case/testsuite data
             dot_env_path (str): specified .env file path.
             mapping (dict): if mapping is specified, it will override variables in config block.
 
@@ -332,4 +332,4 @@ class HttpRunner(object):
         else:
             print(path_or_tests)
             raise exceptions.ParamsError(
-                "Invalid testcase path or testcases: {}".format(path_or_tests))
+                "Invalid test_case path or testcases: {}".format(path_or_tests))

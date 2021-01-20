@@ -52,10 +52,10 @@ class Runner(object):
     """
 
     def __init__(self, config, http_client_session=None):
-        """ run testcase or testsuite.
+        """ run test_case or testsuite.
 
         Args:
-            config (dict): testcase/testsuite config dict
+            config (dict): test_case/testsuite config dict
 
                 {
                     "name": "ABC",
@@ -71,9 +71,9 @@ class Runner(object):
         self.export = config.get("export") or config.get("output", [])
         config_variables = config.get("variables", {})
 
-        # testcase setup hooks
+        # test_case setup hooks
         testcase_setup_hooks = config.get("setup_hooks", [])
-        # testcase teardown hooks
+        # test_case teardown hooks
         self.testcase_teardown_hooks = config.get("teardown_hooks", [])
 
         self.http_client_session = http_client_session or HttpSession()
@@ -307,19 +307,19 @@ class Runner(object):
             self.validation_results = validator.validation_results
 
     def _run_testcase(self, testcase_dict):
-        """ run single testcase.
+        """ run single test_case.
         """
         self.meta_datas = []
         config = testcase_dict.get("config", {})
 
-        # each teststeps in one testcase (YAML/JSON) share the same session.
+        # each teststeps in one test_case (YAML/JSON) share the same session.
         test_runner = Runner(config, self.http_client_session)
 
         tests = testcase_dict.get("teststeps", [])
 
         for index, test_dict in enumerate(tests):
 
-            # override current teststep variables with former testcase output variables
+            # override current teststep variables with former test_case output variables
             former_output_variables = self.session_context.test_variables_mapping
             if former_output_variables:
                 test_dict.setdefault("variables", {})
@@ -341,7 +341,7 @@ class Runner(object):
         )
 
     def run_test(self, test_dict):
-        """ run single teststep of testcase.
+        """ run single teststep of test_case.
             test_dict may be in 3 types.
 
         Args:
@@ -357,7 +357,7 @@ class Runner(object):
                     }
                 }
 
-                # nested testcase
+                # nested test_case
                 {
                     "config": {...},
                     "teststeps": [
@@ -375,7 +375,7 @@ class Runner(object):
         """
         self.meta_datas = None
         if "teststeps" in test_dict:
-            # nested testcase
+            # nested test_case
             test_dict.setdefault("config", {}).setdefault("variables", {})
             test_dict["config"]["variables"].update(
                 self.session_context.session_variables_mapping)
@@ -396,7 +396,7 @@ class Runner(object):
                 self.meta_datas["validators"] = self.validation_results
 
     def export_variables(self, output_variables_list):
-        """ export current testcase variables
+        """ export current test_case variables
         """
         variables_mapping = self.session_context.session_variables_mapping
 

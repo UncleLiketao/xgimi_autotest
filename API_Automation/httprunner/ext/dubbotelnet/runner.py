@@ -29,10 +29,10 @@ class DRunner(Runner):
     def __init__(self, config, http_client_session=None, dubbo_client_session=None):
         """override
 
-        run testcase or testsuite.
+        run test_case or testsuite.
 
         Args:
-            config (dict): testcase/testsuite config dict
+            config (dict): test_case/testsuite config dict
 
                 {
                     "name": "ABC",
@@ -226,7 +226,7 @@ class DRunner(Runner):
         return result
 
     def run_test(self, test_dict):
-        """ run single teststep of testcase.
+        """ run single teststep of test_case.
             test_dict may be in 3 types.
 
         Args:
@@ -242,7 +242,7 @@ class DRunner(Runner):
                     }
                 }
 
-                # nested testcase
+                # nested test_case
                 {
                     "config": {...},
                     "teststeps": [
@@ -260,7 +260,7 @@ class DRunner(Runner):
         """
         self.meta_datas = None
         if "teststeps" in test_dict:
-            # nested testcase
+            # nested test_case
             test_dict.setdefault("config", {}).setdefault("variables", {})
             test_dict["config"]["variables"].update(
                 self.session_context.session_variables_mapping)
@@ -288,12 +288,12 @@ class DRunner(Runner):
     def _run_testcase(self, testcase_dict):
         """override
         
-        run single testcase.
+        run single test_case.
         """
         self.meta_datas = []
         config = testcase_dict.get("config", {})
 
-        # each teststeps in one testcase (YAML/JSON) share the same session.
+        # each teststeps in one test_case (YAML/JSON) share the same session.
         # 此处修改点
         test_runner = DRunner(
             config, self.http_client_session, self.dubbo_client_session)
@@ -302,7 +302,7 @@ class DRunner(Runner):
 
         for index, test_dict in enumerate(tests):
 
-            # override current teststep variables with former testcase output variables
+            # override current teststep variables with former test_case output variables
             former_output_variables = self.session_context.test_variables_mapping
             if former_output_variables:
                 test_dict.setdefault("variables", {})
@@ -333,7 +333,7 @@ class DubboRunner(HttpRunner):
         """override
         """
         def _add_test(test_runner, test_dict):
-            """ add test to testcase.
+            """ add test to test_case.
             """
 
             def test(self):
@@ -345,7 +345,7 @@ class DubboRunner(HttpRunner):
                     self.meta_datas = test_runner.meta_datas
 
             if "config" in test_dict:
-                # run nested testcase
+                # run nested test_case
                 test.__doc__ = test_dict["config"].get("name")
                 variables = test_dict["config"].get("variables", {})
             else:
@@ -381,7 +381,7 @@ class DubboRunner(HttpRunner):
                         "times should be digit, given: {}".format(times))
 
                 for times_index in range(times):
-                    # suppose one testcase should not have more than 9999 steps,
+                    # suppose one test_case should not have more than 9999 steps,
                     # and one step should not run more than 999 times.
                     test_method_name = 'test_{:04}_{:03}'.format(
                         index, times_index)
@@ -402,8 +402,8 @@ class DubboRunner(HttpRunner):
 
         Args:
             path_or_tests:
-                str: testcase/testsuite file/foler path
-                dict: valid testcase/testsuite data
+                str: test_case/testsuite file/foler path
+                dict: valid test_case/testsuite data
             dot_env_path (str): specified .env file path.
             mapping (dict): if mapping is specified, it will override variables in config block.
 
@@ -420,5 +420,5 @@ class DubboRunner(HttpRunner):
             return self.run_tests(path_or_tests)
         else:
             raise exceptions.ParamsError(
-                "Invalid testcase path or testcases: {}".format(path_or_tests))
+                "Invalid test_case path or testcases: {}".format(path_or_tests))
 

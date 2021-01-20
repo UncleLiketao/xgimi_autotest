@@ -5,10 +5,10 @@ def prepare_locust_tests(path):
     """ prepare locust testcases
 
     Args:
-        path (str): testcase file path.
+        path (str): test_case file path.
 
     Returns:
-        list: locust tests data
+        list: locust test_case data
 
             [
                 testcase1_dict,

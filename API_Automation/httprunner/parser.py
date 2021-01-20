@@ -16,7 +16,7 @@ variable_regex_compile = re.compile(r"\$\{(\w+)\}|\$(\w+)")
 # function notation, e.g. ${func1($var_1, $var_3)}
 function_regex_compile = re.compile(r"\$\{(\w+)\(([\$\w\.\-/\s=,]*)\)\}")
 
-""" Store parse failed api/testcase/testsuite file path
+""" Store parse failed api/test_case/testsuite file path
 """
 parse_failed_testfiles = {}
 
@@ -145,7 +145,7 @@ def parse_parameters(parameters, variables_mapping=None, functions_mapping=None)
                 (2) call built-in parameterize function, "${parameterize(account.csv)}"
                 (3) call custom function in debugtalk.py, "${gen_app_version()}"
 
-        variables_mapping (dict): variables mapping loaded from testcase config
+        variables_mapping (dict): variables mapping loaded from test_case config
         functions_mapping (dict): functions mapping loaded from debugtalk.py
 
     Returns:
@@ -1012,18 +1012,18 @@ def _extend_with_api(test_dict, api_def_dict):
 
 
 def _extend_with_testcase(test_dict, testcase_def_dict):
-    """ extend test with testcase definition
-        test will merge and override testcase config definition.
+    """ extend test with test_case definition
+        test will merge and override test_case config definition.
 
     Args:
         test_dict (dict): test block
-        testcase_def_dict (dict): testcase definition
+        testcase_def_dict (dict): test_case definition
 
     Returns:
         dict: extended test dict.
 
     """
-    # override testcase config variables
+    # override test_case config variables
     testcase_def_dict["config"].setdefault("variables", {})
     testcase_def_variables = utils.ensure_mapping_format(
         testcase_def_dict["config"].get("variables", {}))
@@ -1031,7 +1031,7 @@ def _extend_with_testcase(test_dict, testcase_def_dict):
     testcase_def_dict["config"]["variables"] = testcase_def_variables
 
     # override base_url, verify
-    # priority: testcase config > testsuite tests
+    # priority: test_case config > testsuite test_case
     test_base_url = test_dict.pop("base_url", "")
     if not testcase_def_dict["config"].get("base_url"):
         testcase_def_dict["config"]["base_url"] = test_base_url
@@ -1039,9 +1039,9 @@ def _extend_with_testcase(test_dict, testcase_def_dict):
     # override name
     test_name = test_dict.pop("name", None) \
                 or testcase_def_dict["config"].pop("name", None) \
-                or "testcase name undefined"
+                or "test_case name undefined"
 
-    # override testcase config name, output, etc.
+    # override test_case config name, output, etc.
     testcase_def_dict["config"].update(test_dict)
     testcase_def_dict["config"]["name"] = test_name
 
@@ -1050,7 +1050,7 @@ def _extend_with_testcase(test_dict, testcase_def_dict):
 
 
 def __prepare_config(config, project_mapping, session_variables_set=None):
-    """ parse testcase/testsuite config.
+    """ parse test_case/testsuite config.
     """
     # get config variables
     raw_config_variables = config.pop("variables", {})
@@ -1085,17 +1085,17 @@ def __prepare_config(config, project_mapping, session_variables_set=None):
 
 
 def __prepare_testcase_tests(tests, config, project_mapping, session_variables_set=None):
-    """ override tests with testcase config variables, base_url and verify.
-        test maybe nested testcase.
+    """ override test_case with test_case config variables, base_url and verify.
+        test maybe nested test_case.
 
         variables priority:
-        testcase config > testcase test > testcase_def config > testcase_def test > api
+        test_case config > test_case test > testcase_def config > testcase_def test > api
 
         base_url priority:
-        testcase test > testcase config > testsuite test > testsuite config > api
+        test_case test > test_case config > testsuite test > testsuite config > api
 
         verify priority:
-        testcase teststep (api) > testcase config > testsuite config
+        test_case teststep (api) > test_case config > testsuite config
 
     Args:
         tests (list):
@@ -1114,7 +1114,7 @@ def __prepare_testcase_tests(tests, config, project_mapping, session_variables_s
 
         teststep_variables_set = {"request", "response"}
 
-        # 1, testcase config => testcase tests
+        # 1, test_case config => test_case test_case
         # override test_dict variables
         test_dict_variables = utils.extend_variables(
             test_dict.pop("variables", {}),
@@ -1135,9 +1135,9 @@ def __prepare_testcase_tests(tests, config, project_mapping, session_variables_s
             ]
 
         if "testcase_def" in test_dict:
-            # test_dict is nested testcase
+            # test_dict is nested test_case
 
-            # pass former teststep's (as a testcase) export value to next teststep
+            # pass former teststep's (as a test_case) export value to next teststep
             # Since V2.2.2, `extract` is used to replace `output`,
             # `output` is also kept for compatibility
             if "extract" in test_dict:
@@ -1146,11 +1146,11 @@ def __prepare_testcase_tests(tests, config, project_mapping, session_variables_s
                 # kept for compatibility
                 session_variables_set |= set(test_dict["output"])
 
-            # 2, testcase test_dict => testcase_def config
+            # 2, test_case test_dict => testcase_def config
             testcase_def = test_dict.pop("testcase_def")
             _extend_with_testcase(test_dict, testcase_def)
 
-            # verify priority: nested testcase config > testcase config
+            # verify priority: nested test_case config > test_case config
             test_dict["config"].setdefault("verify", config_verify)
 
             # 3, testcase_def config => testcase_def test_dict
@@ -1164,7 +1164,7 @@ def __prepare_testcase_tests(tests, config, project_mapping, session_variables_s
             api_def_dict = test_dict.pop("api_def")
             _extend_with_api(test_dict, api_def_dict)
 
-        # verify priority: testcase teststep > testcase config
+        # verify priority: test_case teststep > test_case config
         if "request" in test_dict:
             if "verify" not in test_dict["request"]:
                 test_dict["request"]["verify"] = config_verify
@@ -1217,7 +1217,7 @@ def __prepare_testcase_tests(tests, config, project_mapping, session_variables_s
 
 
 def _parse_testcase(testcase, project_mapping, session_variables_set=None):
-    """ parse testcase
+    """ parse test_case
 
     Args:
         testcase (dict):
@@ -1262,16 +1262,16 @@ def __get_parsed_testsuite_testcases(testcases, testsuite_config, project_mappin
     """ override testscases with testsuite config variables, base_url and verify.
 
         variables priority:
-        parameters > testsuite config > testcase config > testcase_def config > testcase_def tests > api
+        parameters > testsuite config > test_case config > testcase_def config > testcase_def test_case > api
 
         base_url priority:
-        testcase_def tests > testcase_def config > testcase config > testsuite config
+        testcase_def test_case > testcase_def config > test_case config > testsuite config
 
     Args:
         testcases (dict):
             {
                 "testcase1 name": {
-                    "testcase": "testcases/create_user.yml",
+                    "test_case": "testcases/create_user.yml",
                     "weight": 2,
                     "variables": {
                         "uid": 1000
@@ -1310,24 +1310,24 @@ def __get_parsed_testsuite_testcases(testcases, testsuite_config, project_mappin
 
         parsed_testcase = testcase.pop("testcase_def")
         parsed_testcase.setdefault("config", {})
-        parsed_testcase["path"] = testcase["testcase"]
-        parsed_testcase["type"] = "testcase"
+        parsed_testcase["path"] = testcase["test_case"]
+        parsed_testcase["type"] = "test_case"
         parsed_testcase["config"]["name"] = testcase_name
 
         if "weight" in testcase:
             parsed_testcase["config"]["weight"] = testcase["weight"]
 
-        # base_url priority: testcase config > testsuite config
+        # base_url priority: test_case config > testsuite config
         parsed_testcase["config"].setdefault("base_url", testsuite_base_url)
 
-        # 1, testsuite config => testcase config
+        # 1, testsuite config => test_case config
         # override test_dict variables
         testcase_config_variables = utils.extend_variables(
             testcase.pop("variables", {}),
             testsuite_config_variables
         )
 
-        # 2, testcase config > testcase_def config
+        # 2, test_case config > testcase_def config
         # override testcase_def config variables
         overrided_testcase_config_variables = utils.extend_variables(
             parsed_testcase["config"].pop("variables", {}),
@@ -1386,8 +1386,8 @@ def _parse_testsuite(testsuite, project_mapping):
 
 
 def parse_tests(tests_mapping):
-    """ parse tests and load to parsed testcases
-        tests include api, testcases and testsuites.
+    """ parse test_case and load to parsed testcases
+        test_case include api, testcases and testsuites.
 
     Args:
         tests_mapping (dict): project info and testcases list.
@@ -1420,7 +1420,7 @@ def parse_tests(tests_mapping):
                     }
                 ],
                 "testcases": [
-                    {   # testcase data structure
+                    {   # test_case data structure
                         "config": {
                             "name": "desc1",
                             "path": "testcase1_path",
@@ -1441,7 +1441,7 @@ def parse_tests(tests_mapping):
                             test_dict_2   # another test dict
                         ]
                     },
-                    testcase_dict_2     # another testcase dict
+                    testcase_dict_2     # another test_case dict
                 ],
                 "api": {
                     "variables": {},
@@ -1471,7 +1471,7 @@ def parse_tests(tests_mapping):
                 testcases.append(parsed_testcase)
 
         elif test_type == "apis":
-            # encapsulate api as a testcase
+            # encapsulate api as a test_case
             for api_content in tests_mapping["apis"]:
                 testcase = {
                     "config": {

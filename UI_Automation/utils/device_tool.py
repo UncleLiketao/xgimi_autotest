@@ -4,7 +4,7 @@ import subprocess
 
 
 # 得到设备信息
-def getDeviceInfo(devices):
+def get_device_info(devices):
     cmd = "adb -s " + devices + " shell cat /system/build.prop "
     phone_info = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).stdout.readlines()
     release = "ro.build.version.release="  # 版本
@@ -27,7 +27,6 @@ def getDeviceInfo(devices):
             if temp.find(device) >= 0:
                 result["device"] = temp[len(device):]
                 break
-    # print(result)
     return result
 
 
@@ -53,14 +52,14 @@ def get_cpu_kel(devices):
     for line in get_cmd:
         if line.find(find_str) >= 0:
             int_cpu += 1
-    return str(int_cpu) + "核"
+    return int_cpu
 
 
 # 得到手机分辨率
 def get_app_pix(devices):
     result = os.popen("adb -s " + devices + " shell wm size", "r")
-    return result.readline().split("Physical size:")[1]
+    return result.readline().split("Physical size: ")[1]
 
 
 if __name__ == "__main__":
-    pass
+    print(get_device_info("192.168.34.27:5555"))

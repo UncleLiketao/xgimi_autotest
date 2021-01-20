@@ -34,6 +34,8 @@ class XgimiManagerPage(BasePage):
 
     # 点击应用卸载按钮
     def click_app_uninstall_bt(self):
+        for i in list(*self.app_uninstall_bt):
+            print(i)
         self.find_element(*self.app_uninstall_bt).click()
 
     # 点击网络测速按钮

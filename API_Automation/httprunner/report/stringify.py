@@ -222,7 +222,7 @@ def stringify_summary(summary):
     for index, suite_summary in enumerate(summary["details"]):
 
         if not suite_summary.get("name"):
-            suite_summary["name"] = "testcase {}".format(index)
+            suite_summary["name"] = "test_case {}".format(index)
 
         for record in suite_summary.get("records"):
             meta_datas = record['meta_datas']

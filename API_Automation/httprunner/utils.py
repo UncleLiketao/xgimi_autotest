@@ -133,7 +133,7 @@ def query_json(json_content, query, delimiter='.'):
 
 
 def lower_dict_keys(origin_dict):
-    """ convert keys in dict to lower testcase
+    """ convert keys in dict to lower test_case
 
     Args:
         origin_dict (dict): mapping data structure
@@ -171,7 +171,7 @@ def lower_dict_keys(origin_dict):
 
 
 def lower_test_dict_keys(test_dict):
-    """ convert keys in test_dict to lower testcase, convertion will occur in two places:
+    """ convert keys in test_dict to lower test_case, convertion will occur in two places:
         1, all keys in test_dict;
         2, all keys in test_dict["request"]
     """
@@ -294,7 +294,7 @@ def extend_variables(raw_variables, override_variables):
 
 
 def get_testcase_io(testcase):
-    """ get and print testcase input(variables) and output(export).
+    """ get and print test_case input(variables) and output(export).
 
     Args:
         testcase (unittest.suite.TestSuite): corresponding to one YAML/JSON file, it has been set two attributes:
@@ -405,7 +405,7 @@ validate:
 """
     demo_testcase_content = """
 config:
-    name: "demo testcase"
+    name: "demo test_case"
     variables:
         device_sn: "ABC"
         username: ${ENV(USERNAME)}
@@ -439,12 +439,12 @@ config:
 testcases:
 -
     name: call demo_testcase with data 1
-    testcase: path/to/demo_testcase.yml
+    test_case: path/to/demo_testcase.yml
     variables:
         device_sn: $device_sn
 -
     name: call demo_testcase with data 2
-    testcase: path/to/demo_testcase.yml
+    test_case: path/to/demo_testcase.yml
     variables:
         device_sn: $device_sn
 """
@@ -522,7 +522,7 @@ def gen_cartesian_product(*args):
 
 
 def prettify_json_file(file_list):
-    """ prettify JSON testcase format
+    """ prettify JSON test_case format
     """
     for json_file in set(file_list):
         if not json_file.endswith(".json"):
@@ -619,7 +619,7 @@ def prepare_dump_json_file_abs_path(project_mapping, tag_name):
     test_path = project_mapping.get("test_path")
 
     if not test_path:
-        # running passed in testcase/testsuite data structure
+        # running passed in test_case/testsuite data structure
         dump_file_name = "tests_mapping.{}.json".format(tag_name)
         dumped_json_file_abs_path = os.path.join(pwd_dir_path, "logs", dump_file_name)
         return dumped_json_file_abs_path
@@ -642,7 +642,7 @@ def prepare_dump_json_file_abs_path(project_mapping, tag_name):
 
 
 def dump_logs(json_data, project_mapping, tag_name):
-    """ dump tests data to json file.
+    """ dump test_case data to json file.
         the dumped file is located in PWD/logs folder.
 
     Args:

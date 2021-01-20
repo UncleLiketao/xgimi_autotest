@@ -52,7 +52,7 @@ def locate_debugtalk_py(start_path):
 
     Args:
         start_path (str): start locating path,
-            maybe testcase file path or directory path
+            maybe test_case file path or directory path
 
     Returns:
         str: debugtalk.py file path, None if not found

@@ -7,11 +7,13 @@ from multiprocessing import Process
 import time
 import platform
 import subprocess
+import threading
+
+from utils.Logger import logger
 
 PATH = lambda p: os.path.abspath(
     os.path.join(os.path.dirname(__file__), p)
 )
-import threading
 
 
 class AppiumServer:
@@ -23,16 +25,16 @@ class AppiumServer:
         """
         for i in range(0, len(self.kwargs)):
             cmd = "appium --session-override  -p %s -bp %s -U %s" % (
-            self.kwargs[i]["port"], self.kwargs[i]["bport"], self.kwargs[i]["devices"])
-            print(cmd)
+                self.kwargs[i]["port"], self.kwargs[i]["bport"], self.kwargs[i]["devices"])
+            logger.debug(f'启动命令：{cmd}')
             if platform.system() == "Windows":  # windows下启动server
                 t1 = RunServer(cmd)
                 p = Process(target=t1.start())
                 p.start()
                 while True:
-                    print("--------start_win_server-------------")
+                    logger.debug("--------start_win_server-------------")
                     if self.win_is_runnnig("http://127.0.0.1:" + self.kwargs[i]["port"] + "/wd/hub" + "/status"):
-                        print("-------win_server_ 成功--------------")
+                        logger.debug("-------win_server_ 成功--------------")
                         break
             else:
                 appium = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1,
@@ -40,9 +42,9 @@ class AppiumServer:
                 while True:
                     appium_line = appium.stdout.readline().strip().decode()
                     time.sleep(2)
-                    print("---------start_server----------")
+                    logger.debug("---------start_server----------")
                     if 'listener started' in appium_line or 'Error: listen' in appium_line:
-                        print("----server启动成功---")
+                        logger.debug("----server启动成功---")
                         break
 
     def win_is_runnnig(self, url):
@@ -78,15 +80,13 @@ class AppiumServer:
                 plist = os.popen(cmd).readlines()
                 plisttmp = plist[1].split("    ")
                 plists = plisttmp[1].split(" ")
-                # print plists[0]
                 os.popen("kill -9 {0}".format(plists[0]))
 
-    def re_start_server(self):
+    def re_start_server(self, devices):
         """reStart the appium server
         """
-        # self.stop_server()
-        # self.start_server()
-        pass
+        self.stop_server(devices)
+        self.start_server()
 
 
 class RunServer(threading.Thread):
@@ -99,5 +99,4 @@ class RunServer(threading.Thread):
 
 
 if __name__ == "__main__":
-
     pass

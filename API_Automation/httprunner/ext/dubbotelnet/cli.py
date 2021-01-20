@@ -41,7 +41,7 @@ def main():
         help="show version")
     parser.add_argument(
         'testfile_paths', nargs='*',
-        help="Specify api/testcase/testsuite file paths to run.")
+        help="Specify api/test_case/testsuite file paths to run.")
     parser.add_argument(
         '--log-level', default='INFO',
         help="Specify logging level, default is INFO.")
@@ -61,7 +61,7 @@ def main():
         '--report-file',
         help="Specify report file path, this has higher priority than specifying report dir.")
     parser.add_argument(
-        '--save-tests', action='store_true', default=False,
+        '--save-test_case', action='store_true', default=False,
         help="Save loaded/parsed/summary json data to JSON files.")
     parser.add_argument(
         '--failfast', action='store_true', default=False,
@@ -71,10 +71,10 @@ def main():
         help="Specify new project name.")
     parser.add_argument(
         '--validate', nargs='*',
-        help="Validate YAML/JSON api/testcase/testsuite format.")
+        help="Validate YAML/JSON api/test_case/testsuite format.")
     parser.add_argument(
         '--prettify', nargs='*',
-        help="Prettify JSON testcase format.")
+        help="Prettify JSON test_case format.")
 
     args = parser.parse_args()
 

@@ -1,45 +1,91 @@
-#!/bin/sh
+#!/system/bin/sh
 
-while (())
-do
-reboot
-echo "执行回复语出厂操作"
-echo "执行跳过开机向导操作"
-echo "捕获下载任务job"
-echo "等待升级完成，检查flag是否为1"
-echo "执行reboot"
-echo "开机后检查inui版本、flag值和status状态码"
-echo "开机后校验升级应用版本"
-echo "遍历启动应用并截图"
-循环执行以上所有操作
-
-function {
-
+function check_upgrade_env()
+{
+if [ "$upgrade_env" != "DEBUG" ]
+then
+  echo ${curTime} "系统升级环境不是DEBUG" >> ${usb_log_path}
+  setprop persist.xgimi.upgrade.env DEBUG
+  echo ${curTime} "设置系统升级环境为DEBUG并重启" >> ${usb_log_path}
+  sleep 3
+  input keyevent KPPOWER
+  sleep 3
+  input keyevent 22
+  sleep 3
+  input keyevent 23
+else
+  echo ${curTime} "系统升级环境已经是DEBUG" >> ${usb_log_path}
+fi
 }
 
-funciton version_check {
-  }
+#触发下载并等待开机下载完成
+function wait_app_download()
+{
+  am startservice -a com.xgimi.INUI_APP_UPGRADE --ei flag 1 
+  sleep 60 
+  curTime=$(date "+%F%H%M%S")
+  appupdate_flag=`getprop persist.xgimi.appupdate.flag`
+  while [ "$appupdate_flag" != "1" ]
+  do
+  appupdate_flag=`getprop persist.xgimi.appupdate.flag`
+  sleep 30
+  done
+}
 
-function app_screenshot{
-  }
+#设备重启动作
+function deivce_reboot_action()
+{
+  input keyevent 3
+  sleep 5
+  input keyevent KPPOWER
+  sleep 3
+  input keyevent 22
+  sleep 3
+  input keyevent 23
+}
 
-while [ flag = 1 ];
+function check_inui_version()
+{
+    inui_version=`getprop persist.xgimi.inui.version`
+    curTime=$(date "+%F%H%M%S")
+if [ "$inui_verison" != "1.3.1.1u" ]
+then
+  echo ${curTime} "bundle apk upgrde failed" >> ${usb_log_path}
+  echo ${curTime} "excute upgarade fail revcovery" >> ${usb_log_path}
+  am broadcast -a com.xgimi.intent.action.FACTORY_RESET -f 0x01000000
+elif [ "$inui_version" == "1.3.1.1u" ]
+then
+  echo "bundle apk upgrde success" >> ${usb_log_path}
+  echo "excute upgarade succss revcovery" >> ${usb_log_path}
+  am broadcast -a com.xgimi.intent.action.FACTORY_RESET -f 0x01000000
+fi
+}
 
+#检测开机是否完成
+key=`getprop sys.boot_completed`
+echo "检查开机是否完成..." >> ${usb_log_path}
+while [ "$key" != "1" ]
 do
-  记录升级次数
-  reboot
-    
+key=`getprop sys.boot_completed`
+echo "开机检测完成，睡眠30秒..." >> ${usb_log_path}
+sleep 30
 done
 
-while [ 重启完成]; do
-  info_record
-  version_check
-  app_screenshot
-done
+usb_log_path=/mnt/usb/A8FE-96C5/log.txt
+echo "日志记录路径 $usb_log_path"
+upgrade_env=`getprop persist.xgimi.upgrade.env`
+curTime=$(date "+%F%H%M%S")
+check_upgrade_env
+
+#分情况执行不同命令
+appupdate_flag=`getprop persist.xgimi.appupdate.flag`
+inui_version=`getprop persist.xgimi.inui.version`
+case "$appupdate_flag" in
+  "0") check_inui_version;;
+  "1") deivce_reboot_action;;
+  *) wait_app_download
+deivce_reboot_action
+;;
+esac
 
 
-funciton version_check {
-  }
-  
-function app_screenshot{
-  }
