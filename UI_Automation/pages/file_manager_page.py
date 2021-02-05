@@ -3,14 +3,12 @@ import copy
 from io import BytesIO
 from time import sleep
 from typing import List, Tuple
-
 from appium import webdriver
 from PIL import Image
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
 
-from pages.BasePage import BasePage
 
 
 class FileManagerPage(object):

@@ -2,6 +2,7 @@
 
 import subprocess
 import os
+import re
 
 
 class AndroidDebugBridge(object):
@@ -78,13 +79,23 @@ class AndroidDebugBridge(object):
     def get_app_pid(self, pkg_name):
         string = self.call_adb("shell ps | grep " + pkg_name)
         # print(string)
-        if string == '':
+        if string=='':
             return "the process doesn't exist."
         result = string.split(" ")
         # print(result[4])
         return result[4]
 
+    # 获取设备系统版本号
+    def get_version_number(self, devices):
+        # 读取设备系统版本号
+        deviceAndroidVersion = list(
+            os.popen('adb -s {} shell getprop ro.build.version.release'.format(devices)).readlines())
+        deviceVersion = re.findall(r'^\w*\b', deviceAndroidVersion[0])[0]
+        return deviceAndroidVersion[0].strip('\n')
 
-if __name__ == '__main__':
+
+if __name__=='__main__':
     reuslt = AndroidDebugBridge().attached_devices()
+    version_number = AndroidDebugBridge().get_version_number(reuslt[0])
     print(reuslt)
+    print(version_number)

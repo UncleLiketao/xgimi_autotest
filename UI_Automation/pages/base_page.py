@@ -1,12 +1,8 @@
 # -*- encoding: utf-8 -*-
 import datetime
-import time
-
-from selenium.common.exceptions import NoSuchWindowException
 from selenium.webdriver.common.by import By
-
 from utils.Logger import logger
-from pages.WebDriverWaitPage import WebDriverWaitPage
+from pages.web_driver_wait_page import WebDriverWaitPage
 
 
 class BasePage(object):
@@ -65,51 +61,6 @@ class BasePage(object):
             screen_name = self.get_screen('screen_shot/')
             self.logger.warning(f'已截图，路径：{screen_name}')
             return False
-
-    def get_size(self):
-        """获取屏幕大小"""
-        try:
-            size = self.driver.get_window_size()
-            return size
-        except NoSuchWindowException:
-            self.logger.warning("无能获取到屏幕大小")
-            self.get_screen('screen_shot/')
-
-    def swipe_to_left(self):
-        """左滑"""
-        window_size = self.get_size()
-        if window_size:
-            width = window_size.get("width")
-            height = window_size.get("height")
-            self.driver.swipe(width * 0.9, height * 0.5, width * 0.1, height * 0.5)
-            time.sleep(0.5)
-
-    def swipe_to_right(self):
-        """右滑"""
-        window_size = self.get_size()
-        if window_size:
-            width = window_size.get("width")
-            height = window_size.get("height")
-            self.driver.swipe(width * 0.1, height * 0.5, width * 0.9, height * 0.5)
-            time.sleep(0.5)
-
-    def swipe_to_up(self):
-        """上滑"""
-        window_size = self.get_size()
-        if window_size:
-            width = window_size.get("width")
-            height = window_size.get("height")
-            self.driver.swipe(width * 0.5, height * 0.9, width * 0.5, height * 0.1)
-            time.sleep(0.5)
-
-    def swipe_to_down(self):
-        """下滑、下拉刷新"""
-        window_size = self.get_size()
-        if window_size:
-            width = window_size.get("width")
-            height = window_size.get("height")
-            self.driver.swipe(width * 0.5, height * 0.4, width * 0.5, height * 0.9)
-            time.sleep(1)
 
     def get_screen(self, path):
         """截图"""

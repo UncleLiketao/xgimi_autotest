@@ -2,16 +2,10 @@ import base64
 import copy
 from time import sleep
 from typing import List, Tuple
-
-from PIL import Image
 from appium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
-from selenium.webdriver.remote.webdriver import WebDriver
-from selenium.webdriver.remote.webelement import WebElement
-from appium.webdriver.common.touch_action import TouchAction
 
-from pages.BasePage import BasePage
 
 
 class DoubanFmPage(object):
