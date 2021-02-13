@@ -8,7 +8,6 @@ import time
 import platform
 import subprocess
 import threading
-
 from utils.Logger import logger
 
 PATH = lambda p: os.path.abspath(

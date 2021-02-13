@@ -23,7 +23,7 @@ class AndroidDebugBridge(object):
         pass
 
     # 检查设备
-    def attached_devices(self):
+    def attached_devices(self) -> object:
         # result = self.call_adb("devices")
         devices = []
         result = subprocess.Popen("adb devices", shell=True, stdout=subprocess.PIPE,

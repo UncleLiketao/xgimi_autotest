@@ -2,7 +2,8 @@
 import datetime
 from selenium.webdriver.common.by import By
 from utils.Logger import logger
-from pages.web_driver_wait_page import WebDriverWaitPage
+from appium_po.pages.web_driver_wait_page import WebDriverWaitPage
+from selenium.webdriver.support.ui import WebDriverWait
 
 
 class BasePage(object):
@@ -46,6 +47,12 @@ class BasePage(object):
         if self.wait.web_util_element_to_be_clickable(loc):
             self.find_element(loc).click()
 
+    def get_toast(self, toast_message):
+        message = '//*[@text=\'{}\']'.format(toast_message)
+        # 获取toast提示框内容
+        toast_element = WebDriverWait(self.driver, 5).until(lambda x: x.find_element_by_xpath(message))
+        return toast_element.text
+
     def is_toast_exist(self, text):
         """is toast exist, return True or False
         :Agrs:
@@ -68,6 +75,14 @@ class BasePage(object):
         screen_shot = path + 'a_' + now + '.png'
         self.driver.get_screenshot_as_file(screen_shot)
         return screen_shot
+
+    def input_text(self, loc, text):
+        """
+            封装输入操作函数
+        """
+        self.fm = self.find_element(loc)
+        self.fm.clear()  # 需要先清空输入框，防止有默认内容
+        self.fm.send_keys(text)
 
 
 if __name__ == '__main__':

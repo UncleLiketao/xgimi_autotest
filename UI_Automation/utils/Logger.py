@@ -4,15 +4,14 @@
 """
 import logging
 import logging.config
-
 import yaml
 
 
 class Logger:
     def __init__(self):
-        with open("../config/logging.yaml", 'r') as f:
-            config = yaml.safe_load(f.read())
-            logging.config.dictConfig(config)
+        # with open("../config/logging.yaml", 'r') as f:
+        #     config = yaml.safe_load(f.read())
+        #     logging.config.dictConfig(config)
         self.logger = logging.getLogger(__name__)
 
     def info(self, msg, *args, **kwargs):

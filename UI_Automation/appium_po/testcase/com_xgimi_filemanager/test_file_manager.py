@@ -1,21 +1,18 @@
-import copy
 from time import sleep
 
 import pytest
-from appium import webdriver
-from appium.webdriver.webdriver import WebDriver
 
 # TODO: 调试的时候临时加了这个
 try:
-    from pages.file_manager_page import FileManagerPage
+    from appium_po.pages.com_xgimi_filemanager.file_manager_page import FileManagerPage
     from utils import android_common as android
     from utils.adb_tool import AndroidDebugBridge
 except ModuleNotFoundError:
     import sys
     import os
     sys.path.append(os.getcwd())
-    os.chdir(os.path.abspath(os.path.join('.', 'testcase')))
-    from pages.file_manager_page import FileManagerPage
+    os.chdir(os.path.abspath(os.path.join('../../testcase', 'testcase')))
+    from appium_po.pages.com_xgimi_filemanager.file_manager_page import FileManagerPage
     from utils import android_common as android
     from utils.adb_tool import AndroidDebugBridge
 

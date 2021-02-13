@@ -1,19 +1,16 @@
-import copy
 from time import sleep
 
 import pytest
-from appium import webdriver
-from appium.webdriver.webdriver import WebDriver
 
 # TODO: 调试的时候临时加了这个
 try:
-    from pages.douban_fm_page import DoubanFmPage
+    from appium_po.pages.com_xgimi_doubanfm.douban_fm_page import DoubanFmPage
 except ModuleNotFoundError as e:
     import sys
     import os
     sys.path.append(os.getcwd())
-    os.chdir(os.path.abspath(os.path.join('.', 'testcase')))
-    from pages.douban_fm_page import DoubanFmPage
+    os.chdir(os.path.abspath(os.path.join('../../testcase', 'testcase')))
+    from appium_po.pages.com_xgimi_doubanfm.douban_fm_page import DoubanFmPage
 
 
 class TestDoubanFm(object):
