@@ -13,7 +13,7 @@ curPath = os.path.abspath(os.path.dirname(__file__))
 rootPath = os.path.split(curPath)[0]
 sys.path.append(rootPath)
 
-
+@allure.feature('投影管家功能')
 @allure.severity(allure.severity_level.BLOCKER)
 class TestXgimiManagerHome(object):
     def setup(self):
@@ -29,19 +29,18 @@ class TestXgimiManagerHome(object):
             'deviceName': '%s' % devices[0],
             'platformVersion': '%s' % version_number,
             'appPackage': 'com.xgimi.manager',
-            'appActivity': '.activitys.FirstActivity',
+            'appActivity': '.ui.activitys.MainActivity',
             "noReset": True
         }
         self.driver = webdriver.Remote('http://localhost:%s/wd/hub' % app['port'], caps)
         self.driver.implicitly_wait(15)
-        self.home = XgimiManager
 
-    @allure.feature('投影管家功能')
+
     @allure.story('投影管家-启动进入首页')
     def test_goto_home(self):
         cur_activity = self.driver.current_activity
         print(cur_activity)
-        assert cur_activity == ".activitys.FirstActivity"
+        assert cur_activity == ".ui.activitys.MainActivity"
 
     def teardown(self):
         time.sleep(10)
