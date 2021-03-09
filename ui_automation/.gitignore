@@ -124,3 +124,5 @@ venv.bak/
 
 # mkdocs documentation
 /site
+/appium_po/testcase/com_xgimi_manager/report/
+/appium_po/testcase/com_xgimi_manager/result/

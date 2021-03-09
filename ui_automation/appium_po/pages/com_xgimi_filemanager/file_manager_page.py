@@ -1,17 +1,19 @@
+
 import base64
 import copy
 from io import BytesIO
 from time import sleep
 from typing import List, Tuple
+
 from appium import webdriver
-from PIL import Image
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
 
+from appium_po.pages.base_page import BasePage
 
 
-class FileManagerPage(object):
+class FileManagerPage(BasePage):
     '''资源管理器页面。
 
     包含资源管理器可用的页面操作与操作结果断言。
@@ -35,35 +37,42 @@ class FileManagerPage(object):
     EXECUTOR = "http://localhost:4723/wd/hub"
 
     # 元素定位器
-
-    # 单元格显示的区域
+    # 单元格区域, tab栏, 提示语、侧边栏、弹出菜单
     GRID_CONTAINER = (By.ID, 'com.xgimi.filemanager:id/gmuigrid_grid')
-    # tab栏
     TAB_BAR = (By.ID, 'com.xgimi.filemanager:id/viewpagertab')
-    # 提示语
     NOTICE = (By.ID, 'com.xgimi.filemanager:id/file_header_notice')
-    # 侧边栏
     SIDE_BAR = (
         By.XPATH, '/hierarchy/android.widget.FrameLayout/android.widget.FrameLayout')
-    # 弹出菜单
     POP_UP_MENU = (By.ID, 'com.xgimi.filemanager:id/dialog')
+    # 搜索页输入栏
+    SEARCH_INPUT = (By.ID, 'com.xgimi.filemanager:id/editText_input')
 
-    # 本地视频、音乐、图片、文档播放器的activity
+    # 资源管理器的各activity
+    # 文件搜索页
+    ACTIVITY_SEARCH_PAGE = 'com.xgimi.filemanager.FileSearchActivity'
+
+    # 关联应用的acitity和包名
+    # 本地视频、音乐、图片、文档播放器
+    PACKAGE_VIDEO_PLAYER = 'com.xgimi.gimiplayer'
+    PACKAGE_MUSIC_PLAYER = 'com.xgimi.doubanfm'
+    PACKAGE_PICTURE_VIEWER = 'com.xgimi.gimiplayer'
+    PACKAGE_DOCUMENT_VIEWER = 'com.android.htmlviewer'
     ACTIVITY_VIDEO_PLAYER = '.activity.VideoPlayerActivity'
     ACTIVITY_MUSIC_PLAYER = '.localplayer.LocalMusicActivity'
     ACTIVITY_PICTURE_VIEWER = '.activity.ImagePlayActivity'
     ACTIVITY_DOCUMENT_VIEWER = '.HTMLViewerActivity'
 
-    # 本地视频、音乐、图片、文档播放器的应用包名
-    PACKAGE_VIDEO_PLAYER = 'com.xgimi.gimiplayer'
-    PACKAGE_MUSIC_PLAYER = 'com.xgimi.doubanfm'
-    PACKAGE_PICTURE_VIEWER = 'com.xgimi.gimiplayer'
-    PACKAGE_DOCUMENT_VIEWER = 'com.android.htmlviewer'
-
     def __init__(self, request):
         '''
         Args:
             reqeust: pytest的内建fixture
+
+        Example:
+            # 加到测试用例类中
+            @pytest.fixture
+            def page(self, request):
+                page = FileManagerPage(request)
+                return page
         '''
         caps = copy.copy(self.BASE_CAPABILITIES)
         caps.update(self.APP_CAPABILITIES)
@@ -76,23 +85,10 @@ class FileManagerPage(object):
             driver.quit()
         request.addfinalizer(fin)
 
-        self.driver = driver
+        super(FileManagerPage, self).__init__(driver)
         self.request = request
         self.depth = 0
         self.current_tab = '全部'
-
-    def find_element(self, loc):
-        # TODO: 切换到框架之后需要删除此方法
-        return self.driver.find_element(*loc)
-
-    def is_toast_exist(self, text):
-        # TODO: 切换框架后删除
-        try:
-            toast_loc = (By.XPATH, f'.//*[contains(@text,"{text}")]')
-            self.find_element(toast_loc)
-            return True
-        except NoSuchElementException:
-            return False
 
     def switch_tab(self, tab_name: str):
         '''切换tab。
@@ -134,19 +130,19 @@ class FileManagerPage(object):
             self.press_keycode(23)  # center键
             self.depth += 1
 
-    def back_to_initial_director(self):
+    def back_to_initial_directory(self):
         '''回到调用资源管理器初始页面。
 
         通常在调用click_grid后使用。
 
         Usage:
             page.click_grid('内置存储/Pictures/Screenshots/foo.png')
-            page.back_to_initial_director()  # 可回到资源管理器初始页面
+            page.back_to_initial_directory()  # 可回到资源管理器初始页面
         '''
         self.press_keycode(4, self.depth)
         self.depth = 0
 
-    def click_grid_d(self, grid_name: str):
+    def click_grid_with_mouse(self, grid_name: str):
         '''点击单元格，鼠标操作方式（弃用）。
 
         点击名为grid_name的单元格，如：点击"内置存储"、点击"syslog"等。
@@ -222,30 +218,13 @@ class FileManagerPage(object):
             f'//android.widget.Button[@text="{option_name}" and @resource-id="com.xgimi.filemanager:id/item_xgimidialog_btn"]')
         element_selected_option.click()
 
-    def press_keycode(self, keycode: int, repeat: int = 1):
-        '''发送按键键值
-
-        发送某个按键键值，可重复发送
-
-        Args:
-            keycode: 键值
-            repeat: 重复次数
-        '''
-        for _ in range(repeat):
-            self.driver.press_keycode(keycode)
-            sleep(0.5)
-
-    def double_click(self, keycode: int = 4):
-        '''双击某键。
-
-        双击，通常用来退出，默认键值为退出。
-        '''
-        command = {'command': 'input', 'args': ['keyevent', f'{keycode}']}
-        self.driver.execute_script('mobile:shell', command)
-        self.driver.execute_script('mobile:shell', command)
-        # self.driver.press_keycode(keycode)
-        # self.driver.press_keycode(keycode)
-        # actions = TouchAction(self.driver)
+    def get_visible_grid_number(self) -> int:
+        """获取可见的单元格数量
+        """
+        element_grid_container = self.find_element(self.GRID_CONTAINER)
+        elements_grid = element_grid_container.find_elements_by_xpath(
+            'androidx.recyclerview.widget.RecyclerView/android.widget.LinearLayout')
+        return len(elements_grid)
 
     def is_grid_sorted_by_name(self) -> bool:
         '''判断当前可见的单元格是否按照名称排序。
@@ -362,17 +341,6 @@ class FileManagerPage(object):
         except NoSuchElementException:
             return False
 
-    def __get_current_activity(self) -> str:
-        '''获取当前的activity。
-
-        TODO: 好像可以删除
-        通常用于断言。
-
-        Returns:
-            当前的activity
-        '''
-        return ''
-
     def __move_to_grid(self, grid_name: str):
         '''将焦点移动到某单元格。
 
@@ -412,7 +380,7 @@ class FileManagerPage(object):
             ROW_SIZE = 6
 
             element_grid_container = self.find_element(
-            self.GRID_CONTAINER)
+                self.GRID_CONTAINER)
             elements_grid = element_grid_container.find_elements_by_xpath(
                 'androidx.recyclerview.widget.RecyclerView/android.widget.LinearLayout')
             row_num = int((len(elements_grid) + ROW_SIZE - 1) / ROW_SIZE)  # 行数
@@ -501,8 +469,29 @@ class FileManagerPage(object):
             pass
         else:
             img.show()
-        
+
         return img
+
+    def press_keycode_sequence(self, keycode_sequence: str):
+        """有序按下这些键值，键值与键值之间用“-”分隔，多次输入同一键值可以用 xN 表示
+
+        Args:
+            keycode_sequence: 键值序列
+
+        Example:
+            键值：下20, 左21, 确定23
+            依次按 4次“下键”、“左键”、“确定”、“左键”、“确定” 可以表示为：
+            page.press_keycode_sequence('20x4-21-23-21-23')
+        """
+        keycode_str_list = keycode_sequence.split('-')
+        for keycode_str in keycode_str_list:
+            if 'x' in keycode_str:
+                keycode, times = keycode_str.split('x')
+                for _ in range(int(times)):
+                    self.driver.press_keycode(int(keycode))
+            else:
+                self.driver.press_keycode(int(keycode_str))
+            sleep(0.5)
 
 
 if __name__ == '__main__':

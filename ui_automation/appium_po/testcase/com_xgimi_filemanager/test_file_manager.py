@@ -10,8 +10,13 @@ try:
 except ModuleNotFoundError:
     import sys
     import os
-    sys.path.append(os.getcwd())
-    os.chdir(os.path.abspath(os.path.join('../../testcase', 'testcase')))
+    # sys.path.append('D:\\ProgramFiles\\allure-2.13.8\\bin')
+    for _ in range(10):
+        if os.getcwd().endswith('ui_automation'):
+            sys.path.append(os.getcwd())
+            break
+        os.chdir('..')
+            
     from appium_po.pages.com_xgimi_filemanager.file_manager_page import FileManagerPage
     from utils import android_common as android
     from utils.adb_tool import AndroidDebugBridge
@@ -62,8 +67,8 @@ class TestFilemanager:
         # TODO: 视频tab目录模式和播放模式
 
         page.call_side_bar_and_click_option('搜索视频文件')
-        # TODO: 断言当前的activity
-        page.driver.back()
+        assert page.ACTIVITY_SEARCH_PAGE == page.driver.current_activity
+        page.back(2)
 
         # TODO: 全选、多选
 
@@ -80,7 +85,7 @@ class TestFilemanager:
         page.call_side_bar_and_click_option('图标模式')
 
         page.call_side_bar_and_click_option('搜索音频文件')
-        # TODO: 断言当前的activity
+        assert page.ACTIVITY_SEARCH_PAGE == page.driver.current_activity
         page.driver.back()
 
         # TODO: 全选、多选
@@ -94,7 +99,7 @@ class TestFilemanager:
         page.call_side_bar_and_click_option('按名称排序')
 
         page.call_side_bar_and_click_option('搜索图片文件')
-        # TODO: 断言当前的activity
+        assert page.ACTIVITY_SEARCH_PAGE == page.driver.current_activity
         page.driver.back()
 
         # TODO: 全选、多选
@@ -108,7 +113,7 @@ class TestFilemanager:
         page.call_side_bar_and_click_option('按名称排序')
 
         page.call_side_bar_and_click_option('搜索文档文件')
-        # TODO: 断言当前的activity
+        assert page.ACTIVITY_SEARCH_PAGE == page.driver.current_activity
         page.driver.back()
 
         # TODO: 全选、多选
@@ -123,27 +128,28 @@ class TestFilemanager:
         '''
         # 播放内置存储系统的视频
         page.switch_tab('全部')
+        # TODO: 单元格路径为调试用的临时路径，实际测试时需预先准备文件
         page.click_grid('内置存储/wandoujia/video_2D.mp4')
         sleep(3)
         assert page.PACKAGE_VIDEO_PLAYER == page.driver.current_package
         assert page.ACTIVITY_VIDEO_PLAYER == page.driver.current_activity
-        page.double_click()
-        page.back_to_initial_director()
+        page.back(2)
+        page.back_to_initial_directory()
 
         # 播放外置U盘视频
-        # TODO: 单元格路径为临时路径
+        # TODO: 单元格路径为调试用的临时路径，实际测试时需预先准备文件
         page.click_grid('张正/test_media/3D_FPS/3D-15FPS.mp4')
         sleep(3)
         assert page.PACKAGE_VIDEO_PLAYER == page.driver.current_package
         assert page.ACTIVITY_VIDEO_PLAYER == page.driver.current_activity
-        page.double_click()
-        page.back_to_initial_director()
+        page.back(2)
+        page.back_to_initial_directory()
 
         # TODO: 播放DLNA文件夹视频
 
         # TODO: 添加设备
         page.click_grid('添加设备')
-        page.back_to_initial_director()
+        page.back_to_initial_directory()
 
         # 视频tab内播放视频
         page.switch_tab('视频')
@@ -151,8 +157,7 @@ class TestFilemanager:
         sleep(3)
         assert page.PACKAGE_VIDEO_PLAYER == page.driver.current_package
         assert page.ACTIVITY_VIDEO_PLAYER == page.driver.current_activity
-        page.double_click()
-        page.press_keycode(4)
+        page.back(2)
 
         # 音乐tab
         page.switch_tab('音乐')
@@ -161,8 +166,8 @@ class TestFilemanager:
         sleep(3)
         assert page.PACKAGE_MUSIC_PLAYER == page.driver.current_package
         assert page.ACTIVITY_MUSIC_PLAYER == page.driver.current_activity
-        page.double_click()  # 不能退出音乐播放器
-        page.back_to_initial_director()
+        page.back(2)  # 退出音乐播放器(TODO: 但是现在好像不能退出)
+        page.back_to_initial_directory()
 
         # 图片tab
         page.switch_tab('图片')
@@ -171,18 +176,116 @@ class TestFilemanager:
         sleep(3)
         assert page.PACKAGE_PICTURE_VIEWER == page.driver.current_package
         assert page.ACTIVITY_PICTURE_VIEWER == page.driver.current_activity
-        page.back_to_initial_director()
+        page.back_to_initial_directory()
 
         # 文档tab
         page.switch_tab('文档')
         page.click_grid('try.txt')
-        page.double_click(23)
+        page.press_keycode(23, repeat=2)
         sleep(3)
         assert page.PACKAGE_DOCUMENT_VIEWER == page.driver.current_package
         assert page.ACTIVITY_DOCUMENT_VIEWER == page.driver.current_activity
-        page.press_keycode(4)
+        page.back()
+        
+        # 回到初始状态
+        page.switch_tab('全部')
 
+    def test_search_page(self, page: FileManagerPage):
+        """测试文件搜索页
+
+        关联用例：
+            禅道20295 搜索功能
+        """
+        # 视频搜索
+        page.switch_tab('视频')
+        page.call_side_bar_and_click_option('搜索视频文件')
+        
+        page.input_text(page.SEARCH_INPUT, 'video_')
+        page.press_keycode_sequence('20-23-22x5-20-23')  # 点击输入法的“完成”
+
+        assert page.is_toast_exist('开始搜索文件')
+
+        sleep(3)
+        assert page.get_visible_grid_number() >= 2
+
+        page.press_keycode_sequence('20-23')  # 点击播放视频
+        sleep(3)
+        assert page.PACKAGE_VIDEO_PLAYER == page.driver.current_package
+        assert page.ACTIVITY_VIDEO_PLAYER == page.driver.current_activity
+        page.back(2)
+        page.back()
+
+        # 音乐搜索
+        page.switch_tab('音乐')
+        page.call_side_bar_and_click_option('搜索音频文件')
+        
+        page.input_text(page.SEARCH_INPUT, 'xgimi0')
+        page.press_keycode_sequence('20-23-22x5-20-23')  # 点击输入法的“完成”
+
+        assert page.is_toast_exist('开始搜索文件')
+
+        sleep(3)
+        assert page.get_visible_grid_number() >= 6
+
+        page.press_keycode_sequence('20-23')  # 点击播放音乐
+        sleep(3)
+        assert page.PACKAGE_MUSIC_PLAYER == page.driver.current_package
+        assert page.ACTIVITY_MUSIC_PLAYER == page.driver.current_activity
+        page.back(2)
+        page.back()
+
+        # 图片搜索
+        page.switch_tab('图片')
+        page.call_side_bar_and_click_option('搜索图片文件')
+        
+        page.input_text(page.SEARCH_INPUT, 'Screenshot_')
+        page.press_keycode_sequence('20-23-22x5-20-23')  # 点击输入法的“完成”
+
+        assert page.is_toast_exist('开始搜索文件')
+
+        sleep(3)
+        assert page.get_visible_grid_number() >= 3
+
+        page.press_keycode_sequence('20-23')  # 点击查看图片
+        sleep(3)
+        assert page.PACKAGE_PICTURE_VIEWER == page.driver.current_package
+        assert page.ACTIVITY_PICTURE_VIEWER == page.driver.current_activity
+        page.back(2)
+        page.back()
+
+        # 文档搜索
+        page.switch_tab('文档')
+        page.call_side_bar_and_click_option('搜索文档文件')
+        
+        page.input_text(page.SEARCH_INPUT, 'try.txt')
+        page.press_keycode_sequence('20-23-22x5-20-23')  # 点击输入法的“完成”
+
+        assert page.is_toast_exist('开始搜索文件')
+
+        sleep(3)
+        assert page.get_visible_grid_number() >= 1
+
+        page.press_keycode_sequence('20-23-23-20-23')  # 点击查看图片
+        sleep(3)
+        assert page.PACKAGE_DOCUMENT_VIEWER == page.driver.current_package
+        assert page.ACTIVITY_DOCUMENT_VIEWER == page.driver.current_activity
+        page.back(2)
+        page.back()
+
+    def test_picture_player(self, page: FileManagerPage):
+        """测试图片查看器
+        """
+        pass
 
 if __name__ == '__main__':
+    # 调试
+    import pytest
 
-    pytest.main()
+    # 调试单个方法，不行的话试试下面的命令，或切换到UI_Automation目录下
+    testcase_path = 'appium_po\\testcase\\com_xgimi_filemanager\\test_file_manager.py'
+    class_name = 'TestFilemanager'
+    method_name = 'test_search_page'
+    pytest.main([f'{testcase_path}::{class_name}::{method_name}',])
+
+    # 相同功能的命令行命令
+    # pytest appium_po\testcase\com_xgimi_filemanager\test_file_manager.py::TestFilemanager::test_side_bar

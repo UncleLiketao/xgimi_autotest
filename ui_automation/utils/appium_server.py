@@ -8,7 +8,7 @@ import time
 import platform
 import subprocess
 import threading
-from utils.Logger import logger
+from ui_automation.utils.Logger import logger
 
 PATH = lambda p: os.path.abspath(
     os.path.join(os.path.dirname(__file__), p)

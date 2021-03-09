@@ -6,7 +6,7 @@ import platform
 from utils.adb_tool import *
 from datetime import datetime
 from multiprocessing import Pool
-from utils.device_tool import getDeviceInfo
+from utils.device_tool import get_device_info
 from utils.apk_tool import ApkInfo
 from utils.appium_server import AppiumServer
 
@@ -33,7 +33,7 @@ def runnerPool(getDevices):
         print(getDevices)
         _initApp["deviceName"] = getDevices[i]["devices"]
         _initApp["udid"] = getDevices[i]["devices"]
-        _initApp["platformVersion"] = getDeviceInfo(devices=_initApp["deviceName"])["release"]
+        _initApp["platformVersion"] = get_device_info(devices=_initApp["deviceName"])["release"]
         _initApp["platformName"] = "android"
         _initApp["port"] = getDevices[i]["port"]
         _initApp["automationName"] = "uiautomator2"
