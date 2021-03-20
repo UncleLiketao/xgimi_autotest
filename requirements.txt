@@ -9,7 +9,7 @@ har2case==0.3.1
 httprunner==2.3.2
 idna==2.8
 itsdangerous==1.1.0
-Jinja2==2.10.3
+Jinja2==2.11.3
 jsonpath==0.82
 MarkupSafe==1.1.1
 pycryptodome==3.9.4
